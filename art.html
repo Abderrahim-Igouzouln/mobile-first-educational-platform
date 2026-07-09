@@ -1,0 +1,2463 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevEduForge – Application</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Open+Sans:wght@400;600&family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ── */
+:root {
+  --bleu: #00205B;
+  --bleu-light: #1a3a7a;
+  --bleu-dark: #001540;
+  --orange: #E65100;
+  --orange-light: #FF6D00;
+  --blanc: #F5F5F5;
+  --gris: #ECEFF1;
+  --gris-dark: #cfd4da;
+  --texte: #1a1a2e;
+  --texte-light: #5a6072;
+  --success: #2e7d32;
+  --font-title: 'Montserrat', sans-serif;
+  --font-body: 'Open Sans', sans-serif;
+  --font-code: 'Source Code Pro', monospace;
+  --radius: 14px;
+  --shadow: 0 4px 24px rgba(0,32,91,0.10);
+  --shadow-sm: 0 2px 10px rgba(0,32,91,0.08);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: var(--font-body);
+  background: #0d1b3e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* ── PHONE SHELL ── */
+.phone {
+  width: 390px;
+  height: 844px;
+  background: var(--blanc);
+  border-radius: 44px;
+  overflow: hidden;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.5), 0 0 0 2px rgba(255,255,255,0.08);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Status bar */
+.status-bar {
+  background: var(--bleu);
+  padding: 12px 28px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+.status-time {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: white;
+  letter-spacing: 0.5px;
+}
+.status-icons { display: flex; gap: 6px; align-items: center; }
+.status-icons span { color: white; font-size: 0.8rem; }
+
+/* Screen container */
+.screens {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+.screen {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  background: var(--blanc);
+  display: none;
+  flex-direction: column;
+  scrollbar-width: none;
+}
+.screen::-webkit-scrollbar { display: none; }
+.screen.active { display: flex; }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  background: white;
+  border-top: 1px solid #e8eaf0;
+  display: flex;
+  padding: 10px 0 20px;
+  flex-shrink: 0;
+  box-shadow: 0 -4px 20px rgba(0,32,91,0.06);
+}
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 4px 0;
+}
+.nav-icon { font-size: 1.35rem; filter: grayscale(1); opacity: 0.4; transition: all 0.2s; }
+.nav-label { font-size: 0.6rem; font-family: var(--font-title); font-weight: 700; color: #aaa; letter-spacing: 0.5px; text-transform: uppercase; }
+.nav-item.active .nav-icon { filter: none; opacity: 1; }
+.nav-item.active .nav-label { color: var(--orange); }
+
+/* ════════════════════════════════════
+   SCREEN 1 — HOME
+════════════════════════════════════ */
+.home-header {
+  background: linear-gradient(145deg, var(--bleu-dark) 0%, var(--bleu) 60%, var(--bleu-light) 100%);
+  padding: 20px 22px 28px;
+  position: relative;
+  overflow: hidden;
+}
+.home-header::before {
+  content: '';
+  position: absolute;
+  right: -40px; top: -40px;
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: rgba(230,81,0,0.12);
+}
+.home-header::after {
+  content: '';
+  position: absolute;
+  left: -30px; bottom: -50px;
+  width: 140px; height: 140px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+}
+.home-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.logo-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.logo-mark-sm {
+  width: 32px; height: 32px;
+  background: var(--orange);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-code);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: white;
+}
+.logo-text-sm {
+  font-family: var(--font-title);
+  font-weight: 900;
+  font-size: 1rem;
+  line-height: 1;
+}
+.logo-text-sm .dev { color: var(--orange-light); }
+.logo-text-sm .edu { color: white; }
+.logo-text-sm .forge { color: rgba(255,255,255,0.5); }
+
+.notif-btn {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  border: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; position: relative;
+}
+.notif-dot {
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 8px; height: 8px;
+  background: var(--orange-light);
+  border-radius: 50%;
+  border: 2px solid var(--bleu);
+}
+
+.home-greeting {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 2px;
+}
+.home-name {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: white;
+  margin-bottom: 14px;
+}
+.home-name span { color: var(--orange-light); }
+
+.progress-card {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 14px 16px;
+  backdrop-filter: blur(10px);
+  position: relative;
+  z-index: 1;
+}
+.progress-card-label {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.6);
+  font-family: var(--font-title);
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.progress-bar-wrap {
+  background: rgba(255,255,255,0.15);
+  border-radius: 99px;
+  height: 6px;
+  margin-bottom: 8px;
+}
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--orange), var(--orange-light));
+  width: 42%;
+  transition: width 1s ease;
+}
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.progress-pct {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--orange-light);
+}
+.progress-detail {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.5);
+}
+
+/* Home body */
+.home-body { padding: 20px 18px; flex: 1; }
+
+.section-heading {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--bleu);
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.section-heading a {
+  font-size: 0.7rem;
+  color: var(--orange);
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Domain cards scroll */
+.domains-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 22px;
+  scrollbar-width: none;
+}
+.domains-scroll::-webkit-scrollbar { display: none; }
+
+.domain-card {
+  flex-shrink: 0;
+  width: 130px;
+  border-radius: 14px;
+  padding: 16px 14px;
+  cursor: pointer;
+  transition: transform 0.18s, box-shadow 0.18s;
+  position: relative;
+  overflow: hidden;
+}
+.domain-card:hover { transform: translateY(-3px); }
+.domain-card.prog { background: linear-gradient(135deg, #00205B, #1a3a7a); }
+.domain-card.devops { background: linear-gradient(135deg, #1b4332, #2d6a4f); }
+.domain-card.os { background: linear-gradient(135deg, #4a1942, #7b2d8b); }
+.domain-card.ai { background: linear-gradient(135deg, #7b3100, #E65100); }
+
+.domain-icon { font-size: 1.8rem; margin-bottom: 8px; }
+.domain-name {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: white;
+  margin-bottom: 4px;
+}
+.domain-count {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.55);
+  font-family: var(--font-code);
+}
+.domain-badge {
+  position: absolute;
+  top: 10px; right: 10px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-size: 0.55rem;
+  font-family: var(--font-title);
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.5px;
+}
+
+/* Continue card */
+.continue-card {
+  background: white;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 22px;
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  cursor: pointer;
+  border: 1px solid #eaecf0;
+  transition: box-shadow 0.2s;
+}
+.continue-card:hover { box-shadow: var(--shadow); }
+.continue-thumb {
+  width: 52px; height: 52px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #00205B, #1a3a7a);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.continue-info { flex: 1; }
+.continue-tech {
+  font-size: 0.65rem;
+  color: var(--orange);
+  font-family: var(--font-title);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.continue-title {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--texte);
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+.mini-bar-wrap {
+  background: var(--gris);
+  height: 4px;
+  border-radius: 99px;
+}
+.mini-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: var(--orange);
+  width: 42%;
+}
+.continue-arrow {
+  font-size: 1.2rem;
+  color: var(--bleu);
+  flex-shrink: 0;
+}
+
+/* Stats row */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 22px;
+}
+.stat-mini {
+  background: white;
+  border-radius: 12px;
+  padding: 12px 10px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #eaecf0;
+}
+.stat-mini-val {
+  font-family: var(--font-title);
+  font-weight: 900;
+  font-size: 1.2rem;
+  color: var(--bleu);
+  margin-bottom: 2px;
+}
+.stat-mini-val span { color: var(--orange); }
+.stat-mini-label {
+  font-size: 0.58rem;
+  color: var(--texte-light);
+  font-family: var(--font-title);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Recent activity */
+.activity-list { display: flex; flex-direction: column; gap: 8px; }
+.activity-item {
+  background: white;
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #eaecf0;
+}
+.activity-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot-green { background: #2e7d32; }
+.dot-orange { background: var(--orange); }
+.dot-blue { background: var(--bleu); }
+.activity-text {
+  flex: 1;
+  font-size: 0.75rem;
+  color: var(--texte);
+  line-height: 1.4;
+}
+.activity-text strong {
+  font-family: var(--font-title);
+  font-weight: 700;
+  color: var(--bleu);
+}
+.activity-time {
+  font-size: 0.62rem;
+  color: var(--texte-light);
+  font-family: var(--font-code);
+}
+
+/* ════════════════════════════════════
+   SCREEN 2 — COURS (React)
+════════════════════════════════════ */
+.course-header {
+  background: linear-gradient(145deg, #00205B, #1a3a7a);
+  padding: 16px 18px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.course-header::after {
+  content: '</>';
+  position: absolute;
+  right: 16px; top: 50%; transform: translateY(-50%);
+  font-family: var(--font-code);
+  font-weight: 700;
+  font-size: 3.5rem;
+  color: rgba(255,255,255,0.05);
+  pointer-events: none;
+}
+.back-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: none; border: none; cursor: pointer;
+  color: rgba(255,255,255,0.7);
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: 0.75rem;
+  margin-bottom: 14px;
+  padding: 0;
+}
+.course-domain-tag {
+  display: inline-block;
+  background: var(--orange);
+  color: white;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.6rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border-radius: 6px;
+  padding: 3px 10px;
+  margin-bottom: 8px;
+}
+.course-title-h {
+  font-family: var(--font-title);
+  font-weight: 900;
+  font-size: 1.3rem;
+  color: white;
+  line-height: 1.2;
+  margin-bottom: 14px;
+}
+.course-tabs {
+  display: flex;
+  gap: 0;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 3px;
+}
+.course-tab {
+  flex: 1;
+  padding: 7px;
+  border-radius: 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0.5px;
+  transition: all 0.2s;
+}
+.course-tab.active {
+  background: white;
+  color: var(--bleu);
+}
+
+/* Course body */
+.course-body { padding: 18px; flex: 1; }
+
+.lesson-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.lesson-item {
+  background: white;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #eaecf0;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.lesson-item:hover { border-color: var(--orange); box-shadow: 0 4px 16px rgba(230,81,0,0.12); }
+.lesson-item.active { border-color: var(--bleu); background: #f0f4ff; }
+.lesson-num {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+.lesson-num.done { background: #e8f5e9; color: var(--success); }
+.lesson-num.current { background: var(--bleu); color: white; }
+.lesson-num.locked { background: var(--gris); color: var(--texte-light); }
+.lesson-info { flex: 1; }
+.lesson-name {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--texte);
+  margin-bottom: 2px;
+}
+.lesson-meta {
+  font-size: 0.65rem;
+  color: var(--texte-light);
+  display: flex;
+  gap: 8px;
+}
+.lesson-status { font-size: 0.9rem; flex-shrink: 0; }
+
+/* Lecture content */
+.lecture-content {
+  background: white;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #eaecf0;
+  margin-bottom: 16px;
+}
+.lecture-eyebrow {
+  font-size: 0.62rem;
+  font-family: var(--font-title);
+  font-weight: 700;
+  color: var(--orange);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.lecture-heading {
+  font-family: var(--font-title);
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--bleu);
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+.lecture-p {
+  font-size: 0.8rem;
+  color: var(--texte-light);
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+.code-block {
+  background: #0d1117;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+  border-left: 3px solid var(--orange);
+}
+.code-block pre {
+  font-family: var(--font-code);
+  font-size: 0.72rem;
+  color: #e6edf3;
+  line-height: 1.6;
+  white-space: pre;
+}
+.code-kw { color: #ff7b72; }
+.code-fn { color: #d2a8ff; }
+.code-str { color: #a5d6ff; }
+.code-cmt { color: #8b949e; }
+.code-tag { color: #7ee787; }
+
+.info-box {
+  background: #e8f4fd;
+  border-radius: 10px;
+  padding: 12px 14px;
+  border-left: 3px solid #1976d2;
+  margin-bottom: 12px;
+}
+.info-box p {
+  font-size: 0.75rem;
+  color: #1565c0;
+  line-height: 1.5;
+}
+.info-box p strong { font-family: var(--font-title); }
+
+.continue-btn {
+  width: 100%;
+  background: var(--bleu);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  letter-spacing: 0.5px;
+}
+.continue-btn:hover { background: var(--bleu-light); }
+.continue-btn.orange-btn { background: var(--orange); }
+.continue-btn.orange-btn:hover { background: var(--orange-light); }
+
+/* ════════════════════════════════════
+   SCREEN 3 — EXERCICES
+════════════════════════════════════ */
+.exercise-header {
+  background: linear-gradient(145deg, #1b4332, #2d6a4f);
+  padding: 16px 18px 22px;
+}
+.exercise-title-h {
+  font-family: var(--font-title);
+  font-weight: 900;
+  font-size: 1.2rem;
+  color: white;
+  margin-bottom: 4px;
+  margin-top: 12px;
+}
+.exercise-sub {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 14px;
+}
+.ex-progress-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.ex-progress-label { font-size: 0.7rem; color: rgba(255,255,255,0.7); font-family: var(--font-title); font-weight: 600; }
+.ex-progress-val { font-size: 0.7rem; color: #69f0ae; font-family: var(--font-code); font-weight: 600; }
+.ex-bar-wrap { background: rgba(255,255,255,0.15); border-radius: 99px; height: 5px; }
+.ex-bar-fill { height: 100%; border-radius: 99px; background: #69f0ae; width: 33%; }
+
+.exercise-body { padding: 18px; flex: 1; }
+
+.question-card {
+  background: white;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #eaecf0;
+  margin-bottom: 14px;
+}
+.q-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 6px;
+  padding: 3px 10px;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.62rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.q-text {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--texte);
+  line-height: 1.4;
+  margin-bottom: 14px;
+}
+.q-code-inline {
+  font-family: var(--font-code);
+  background: var(--gris);
+  color: var(--orange);
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-size: 0.85rem;
+}
+
+.options-list { display: flex; flex-direction: column; gap: 8px; }
+.option-item {
+  border: 2px solid #eaecf0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.18s;
+}
+.option-item:hover { border-color: var(--bleu); background: #f0f4ff; }
+.option-item.selected { border-color: var(--bleu); background: #e8eeff; }
+.option-item.correct { border-color: #2e7d32; background: #e8f5e9; }
+.option-item.wrong { border-color: #c62828; background: #ffebee; }
+.option-letter {
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  background: var(--gris);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: var(--texte-light);
+  flex-shrink: 0;
+  transition: all 0.18s;
+}
+.option-item.selected .option-letter { background: var(--bleu); color: white; }
+.option-item.correct .option-letter { background: #2e7d32; color: white; }
+.option-item.wrong .option-letter { background: #c62828; color: white; }
+.option-text {
+  font-size: 0.82rem;
+  color: var(--texte);
+  line-height: 1.4;
+  flex: 1;
+}
+
+.feedback-box {
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-top: 12px;
+  display: none;
+}
+.feedback-box.show { display: block; }
+.feedback-box.success { background: #e8f5e9; border-left: 3px solid #2e7d32; }
+.feedback-box.error { background: #ffebee; border-left: 3px solid #c62828; }
+.feedback-box p { font-size: 0.78rem; line-height: 1.5; }
+.feedback-box.success p { color: #1b5e20; }
+.feedback-box.error p { color: #b71c1c; }
+.feedback-box strong { font-family: var(--font-title); }
+
+.ex-btn-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.ex-btn-row button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.8rem;
+  transition: all 0.18s;
+}
+.btn-check { background: var(--bleu); color: white; }
+.btn-check:hover { background: var(--bleu-light); }
+.btn-next { background: var(--gris); color: var(--texte-light); }
+.btn-next:active { background: var(--gris-dark); }
+
+/* True/False */
+.tf-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.tf-btn {
+  padding: 16px;
+  border-radius: 12px;
+  border: 2px solid #eaecf0;
+  cursor: pointer;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-align: center;
+  transition: all 0.18s;
+  background: white;
+}
+.tf-btn:hover { border-color: var(--bleu); }
+.tf-btn.selected-true { border-color: #2e7d32; background: #e8f5e9; color: #2e7d32; }
+.tf-btn.selected-false { border-color: #c62828; background: #ffebee; color: #c62828; }
+
+/* Fill blank */
+.fill-blank-input {
+  width: 100%;
+  border: 2px solid #eaecf0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-family: var(--font-code);
+  font-size: 0.9rem;
+  color: var(--texte);
+  outline: none;
+  transition: border-color 0.18s;
+  margin-bottom: 10px;
+  background: white;
+}
+.fill-blank-input:focus { border-color: var(--bleu); }
+
+/* ════════════════════════════════════
+   SCREEN 4 — CERTIFICAT
+════════════════════════════════════ */
+.cert-header {
+  background: linear-gradient(145deg, #1a0a00, #7b3100, #E65100);
+  padding: 16px 18px 24px;
+}
+.cert-title-h {
+  font-family: var(--font-title);
+  font-weight: 900;
+  font-size: 1.2rem;
+  color: white;
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+.cert-sub {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.65);
+}
+
+.cert-body { padding: 18px; flex: 1; }
+
+.cert-card {
+  background: white;
+  border-radius: 16px;
+  padding: 22px 20px;
+  box-shadow: var(--shadow);
+  border: 1px solid #eaecf0;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.cert-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--bleu), var(--orange));
+}
+.cert-logo-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.cert-logo-mark {
+  width: 28px; height: 28px;
+  background: var(--bleu);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-code);
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--orange-light);
+}
+.cert-logo-label {
+  font-family: var(--font-title);
+  font-weight: 900;
+  font-size: 0.8rem;
+  color: var(--bleu);
+}
+.cert-official-tag {
+  margin-left: auto;
+  background: #fff3e0;
+  color: var(--orange);
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 0.58rem;
+  font-family: var(--font-title);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.cert-headline {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.72rem;
+  color: var(--texte-light);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.cert-recipient {
+  font-family: var(--font-title);
+  font-weight: 900;
+  font-size: 1.4rem;
+  color: var(--bleu);
+  margin-bottom: 10px;
+}
+.cert-achievement {
+  font-size: 0.8rem;
+  color: var(--texte-light);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+.cert-achievement strong {
+  color: var(--orange);
+  font-family: var(--font-title);
+  font-weight: 700;
+}
+
+.cert-tech-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #f0f4ff;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+}
+.cert-tech-icon { font-size: 1.4rem; }
+.cert-tech-name {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--bleu);
+}
+.cert-tech-level {
+  font-size: 0.65rem;
+  color: var(--texte-light);
+}
+
+.cert-divider {
+  height: 1px;
+  background: var(--gris);
+  margin: 14px 0;
+}
+
+.cert-meta-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.cert-meta-item { }
+.cert-meta-label {
+  font-size: 0.6rem;
+  font-family: var(--font-title);
+  font-weight: 700;
+  color: var(--texte-light);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.cert-meta-val {
+  font-size: 0.78rem;
+  color: var(--texte);
+  font-family: var(--font-code);
+}
+
+.cert-bottom-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.cert-qr {
+  width: 64px; height: 64px;
+  background: var(--texte);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.cert-qr svg { width: 56px; height: 56px; }
+.cert-qr-label {
+  font-size: 0.55rem;
+  color: var(--texte-light);
+  text-align: center;
+  margin-top: 4px;
+  font-family: var(--font-code);
+}
+.cert-signature {
+  text-align: right;
+}
+.cert-sig-line {
+  width: 90px;
+  height: 1px;
+  background: var(--bleu);
+  margin-bottom: 3px;
+  margin-left: auto;
+}
+.cert-sig-name {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.72rem;
+  color: var(--bleu);
+}
+.cert-sig-role {
+  font-size: 0.58rem;
+  color: var(--texte-light);
+  font-family: var(--font-code);
+}
+
+.cert-score-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.score-circle-wrap { text-align: center; }
+.score-circle {
+  width: 70px; height: 70px;
+  border-radius: 50%;
+  background: conic-gradient(var(--orange) 0% 88%, var(--gris) 88% 100%);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  margin: 0 auto 4px;
+}
+.score-circle-inner {
+  width: 54px; height: 54px;
+  border-radius: 50%;
+  background: white;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-title);
+  font-weight: 900;
+  font-size: 1rem;
+  color: var(--bleu);
+}
+.score-label {
+  font-size: 0.6rem;
+  color: var(--texte-light);
+  font-family: var(--font-title);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.skills-earned {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.skill-tag {
+  background: #e8eeff;
+  border-radius: 6px;
+  padding: 4px 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: var(--bleu);
+  font-family: var(--font-title);
+  font-weight: 700;
+}
+.skill-tag::before { content: '✓'; color: var(--success); font-weight: 900; }
+
+.download-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--orange), var(--orange-light));
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 16px rgba(230,81,0,0.25);
+  transition: all 0.2s;
+}
+.download-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(230,81,0,0.35); }
+.share-btn {
+  width: 100%;
+  background: white;
+  color: var(--bleu);
+  border: 2px solid var(--bleu);
+  border-radius: 12px;
+  padding: 12px;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+.share-btn:hover { background: #f0f4ff; }
+
+/* All certs list */
+.all-certs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cert-list-item {
+  background: white;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #eaecf0;
+  cursor: pointer;
+}
+.cert-list-icon {
+  width: 42px; height: 42px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.cert-list-info { flex: 1; }
+.cert-list-tech {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--texte);
+  margin-bottom: 2px;
+}
+.cert-list-date {
+  font-size: 0.65rem;
+  color: var(--texte-light);
+  font-family: var(--font-code);
+}
+.cert-list-score {
+  font-family: var(--font-title);
+  font-weight: 900;
+  font-size: 1rem;
+  color: var(--orange);
+}
+
+.cert-locked-item {
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1.5px dashed #ddd;
+  opacity: 0.6;
+}
+
+/* ════════════════════════════════════
+   SCREEN 5 — PROFIL
+════════════════════════════════════ */
+.profile-header {
+  background: linear-gradient(145deg, var(--bleu-dark), var(--bleu));
+  padding: 24px 18px 28px;
+  text-align: center;
+}
+.profile-avatar {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--orange), var(--orange-light));
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-title);
+  font-weight: 900;
+  font-size: 1.6rem;
+  color: white;
+  margin: 0 auto 12px;
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.15);
+}
+.profile-name {
+  font-family: var(--font-title);
+  font-weight: 900;
+  font-size: 1.2rem;
+  color: white;
+  margin-bottom: 2px;
+}
+.profile-email {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 14px;
+  font-family: var(--font-code);
+}
+.profile-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: linear-gradient(135deg, var(--orange), var(--orange-light));
+  color: white;
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.7rem;
+}
+
+.profile-body { padding: 18px; flex: 1; }
+
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.profile-stat {
+  background: white;
+  border-radius: 12px;
+  padding: 14px 10px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #eaecf0;
+}
+.profile-stat-val {
+  font-family: var(--font-title);
+  font-weight: 900;
+  font-size: 1.3rem;
+  color: var(--bleu);
+  margin-bottom: 2px;
+}
+.profile-stat-val.orange { color: var(--orange); }
+.profile-stat-label {
+  font-size: 0.58rem;
+  color: var(--texte-light);
+  font-family: var(--font-title);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.menu-section-title {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.7rem;
+  color: var(--texte-light);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.menu-list {
+  background: white;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #eaecf0;
+  margin-bottom: 18px;
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f0f2f5;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.menu-item:last-child { border-bottom: none; }
+.menu-item:hover { background: #fafbff; }
+.menu-item-icon {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.menu-item-text {
+  flex: 1;
+  font-family: var(--font-title);
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--texte);
+}
+.menu-item-arrow { color: var(--texte-light); font-size: 0.8rem; }
+.menu-item-tag {
+  background: var(--orange);
+  color: white;
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-size: 0.58rem;
+  font-family: var(--font-title);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.offline-toggle-row {
+  background: white;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #eaecf0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.toggle-icon { font-size: 1.3rem; }
+.toggle-info { flex: 1; }
+.toggle-title { font-family: var(--font-title); font-weight: 700; font-size: 0.82rem; color: var(--texte); margin-bottom: 1px; }
+.toggle-sub { font-size: 0.67rem; color: var(--texte-light); }
+.toggle-switch {
+  width: 44px; height: 24px;
+  background: var(--success);
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.toggle-thumb {
+  position: absolute;
+  top: 3px; right: 3px;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
+/* Tooltip pulse animation */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.offline-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(46,125,50,0.15);
+  color: #1b5e20;
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 0.65rem;
+  font-family: var(--font-title);
+  font-weight: 700;
+  margin-top: 6px;
+}
+.offline-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--success);
+  animation: pulse 1.5s infinite;
+}
+
+/* ════════════════════════════════════
+   SCREEN: DOMAINES (catalogue)
+════════════════════════════════════ */
+.domaines-header {
+  background: linear-gradient(145deg, var(--bleu-dark), var(--bleu));
+  padding: 16px 18px 24px;
+}
+.domaines-title {
+  font-family: var(--font-title);
+  font-weight: 900;
+  font-size: 1.25rem;
+  color: white;
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+.domaines-sub {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.6);
+}
+.domaines-body { padding: 18px; flex: 1; }
+.domain-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.domain-big-card {
+  border-radius: 16px;
+  padding: 20px 16px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.18s, box-shadow 0.18s;
+  box-shadow: 0 4px 18px rgba(0,0,32,0.18);
+}
+.domain-big-card:hover { transform: translateY(-3px) scale(1.02); }
+.domain-big-card::after {
+  content: '';
+  position: absolute;
+  bottom: -20px; right: -20px;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.07);
+  pointer-events: none;
+}
+.dbc-icon { font-size: 2.2rem; margin-bottom: 8px; }
+.dbc-name {
+  font-family: var(--font-title);
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: white;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+.dbc-count {
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.55);
+  font-family: var(--font-code);
+}
+.dbc-arrow {
+  position: absolute;
+  top: 14px; right: 14px;
+  font-size: 1rem;
+  color: rgba(255,255,255,0.4);
+}
+.dbc-progress-bar {
+  height: 3px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 99px;
+  margin-top: 10px;
+  overflow: hidden;
+}
+.dbc-progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: rgba(255,255,255,0.7);
+}
+
+/* ════════════════════════════════════
+   SCREEN: TECH LIST within a domain
+════════════════════════════════════ */
+.tech-header {
+  padding: 16px 18px 22px;
+}
+.tech-domain-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+  margin-top: 12px;
+}
+.tech-domain-icon-big { font-size: 2rem; }
+.tech-domain-info {}
+.tech-domain-name-h {
+  font-family: var(--font-title);
+  font-weight: 900;
+  font-size: 1.2rem;
+  color: white;
+  line-height: 1.1;
+}
+.tech-domain-count-h {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.55);
+  margin-top: 2px;
+}
+.tech-body { padding: 16px 18px; flex: 1; }
+.tech-list { display: flex; flex-direction: column; gap: 10px; }
+
+.tech-card {
+  background: white;
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #eaecf0;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.tech-card:hover { border-color: var(--orange); box-shadow: 0 4px 16px rgba(230,81,0,0.12); transform: translateX(3px); }
+.tech-card-icon {
+  font-size: 1.8rem;
+  width: 48px; height: 48px;
+  background: var(--gris);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.tech-card-info { flex: 1; min-width: 0; }
+.tech-card-name {
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--texte);
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tech-card-level {
+  font-size: 0.65rem;
+  color: var(--texte-light);
+  margin-bottom: 7px;
+}
+.tech-mini-bar-wrap {
+  background: var(--gris);
+  height: 4px;
+  border-radius: 99px;
+  overflow: hidden;
+}
+.tech-mini-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: var(--orange);
+  transition: width 0.6s ease;
+}
+.tech-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+}
+.tech-status-icon { font-size: 1.1rem; }
+.tech-status-label {
+  font-size: 0.55rem;
+  font-family: var(--font-title);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* ── Subtle scroll shadow at bottom of long lists ── */
+.fade-bottom {
+  position: sticky;
+  bottom: 0;
+  height: 30px;
+  background: linear-gradient(transparent, var(--blanc));
+  pointer-events: none;
+  margin-top: -30px;
+}
+</style>
+</head>
+<body>
+
+<div class="phone" id="app">
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <span>📶</span>
+      <span>🔋</span>
+    </div>
+  </div>
+
+  <!-- SCREENS -->
+  <div class="screens">
+
+    <!-- ══ SCREEN 1 : ACCUEIL ══ -->
+    <div class="screen active" id="s-home">
+
+      <div class="home-header">
+        <div class="home-top-row">
+          <div class="logo-inline">
+            <div class="logo-mark-sm">&lt;/&gt;</div>
+            <div class="logo-text-sm">
+              <span class="dev">Dev</span><span class="edu">Edu</span><span class="forge">Forge</span>
+            </div>
+          </div>
+          <button class="notif-btn">🔔<div class="notif-dot"></div></button>
+        </div>
+        <div class="home-greeting">Bonsoir,</div>
+        <div class="home-name">Mohamed <span>👋</span></div>
+        <div class="progress-card">
+          <div class="progress-card-label">Parcours React — Module 3/7</div>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="mainBar"></div></div>
+          <div class="progress-meta">
+            <span class="progress-pct">42%</span>
+            <span class="progress-detail">3 leçons restantes</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="home-body">
+
+        <div class="section-heading">
+          Domaines <a href="#" onclick="goTo('s-domaines');return false;">Voir tout →</a>
+        </div>
+        <div class="domains-scroll">
+          <div class="domain-card prog" onclick="openDomain('prog')">
+            <div class="domain-badge">Actif</div>
+            <div class="domain-icon">⚛️</div>
+            <div class="domain-name">Programmation</div>
+            <div class="domain-count">5 technologies</div>
+          </div>
+          <div class="domain-card devops" onclick="openDomain('devops')">
+            <div class="domain-icon">🐳</div>
+            <div class="domain-name">DevOps</div>
+            <div class="domain-count">5 technologies</div>
+          </div>
+          <div class="domain-card os" onclick="openDomain('os')">
+            <div class="domain-icon">🐧</div>
+            <div class="domain-name">Systèmes OS</div>
+            <div class="domain-count">3 technologies</div>
+          </div>
+          <div class="domain-card ai" onclick="openDomain('ai')">
+            <div class="domain-icon">🤖</div>
+            <div class="domain-name">IA & LLMs</div>
+            <div class="domain-count">4 technologies</div>
+          </div>
+        </div>
+
+        <div class="section-heading">Reprendre</div>
+        <div class="continue-card" onclick="openTech('prog',0)">
+          <div class="continue-thumb">⚛️</div>
+          <div class="continue-info">
+            <div class="continue-tech">React · Leçon 3</div>
+            <div class="continue-title">Les Hooks : useState & useEffect</div>
+            <div class="mini-bar-wrap"><div class="mini-bar-fill"></div></div>
+          </div>
+          <div class="continue-arrow">›</div>
+        </div>
+
+        <div class="section-heading">Statistiques</div>
+        <div class="stats-row">
+          <div class="stat-mini">
+            <div class="stat-mini-val">12<span>j</span></div>
+            <div class="stat-mini-label">Série active</div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-val">3</div>
+            <div class="stat-mini-label">Certifs obtenues</div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-val">87<span>%</span></div>
+            <div class="stat-mini-label">Score moyen</div>
+          </div>
+        </div>
+
+        <div class="section-heading">Activité récente</div>
+        <div class="activity-list">
+          <div class="activity-item">
+            <div class="activity-dot dot-green"></div>
+            <div class="activity-text"><strong>Certification Python</strong> obtenue avec 91%</div>
+            <div class="activity-time">Hier</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot dot-orange"></div>
+            <div class="activity-text"><strong>Exercice React</strong> — 7/10 bonnes réponses</div>
+            <div class="activity-time">Il y a 2j</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot dot-blue"></div>
+            <div class="activity-text"><strong>Projet Docker</strong> — Soumis pour révision</div>
+            <div class="activity-time">Il y a 3j</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="fade-bottom"></div>
+    </div>
+
+    <!-- ══ SCREEN 2 : COURS ══ -->
+    <div class="screen" id="s-cours">
+
+      <div class="course-header">
+        <button class="back-btn" onclick="goTo('s-home')">← Retour</button>
+        <div class="course-domain-tag">Programmation</div>
+        <div class="course-title-h">React.js<br>Fondamentaux</div>
+        <div class="course-tabs">
+          <button class="course-tab active" onclick="switchCourseTab(this,'tab-lecture')">📖 Lecture</button>
+          <button class="course-tab" onclick="switchCourseTab(this,'tab-exercices');goTo('s-exercices')">✏️ Exercices</button>
+          <button class="course-tab" onclick="switchCourseTab(this,'tab-projets')">🛠 Projets</button>
+        </div>
+      </div>
+
+      <div class="course-body" id="tab-lecture">
+
+        <div class="lesson-list">
+          <div class="lesson-item">
+            <div class="lesson-num done">✓</div>
+            <div class="lesson-info">
+              <div class="lesson-name">Introduction à React</div>
+              <div class="lesson-meta"><span>⏱ 8 min</span><span>5 exercices</span></div>
+            </div>
+            <div class="lesson-status">✅</div>
+          </div>
+          <div class="lesson-item">
+            <div class="lesson-num done">✓</div>
+            <div class="lesson-info">
+              <div class="lesson-name">JSX & Composants</div>
+              <div class="lesson-meta"><span>⏱ 12 min</span><span>8 exercices</span></div>
+            </div>
+            <div class="lesson-status">✅</div>
+          </div>
+          <div class="lesson-item active">
+            <div class="lesson-num current">3</div>
+            <div class="lesson-info">
+              <div class="lesson-name">Hooks : useState & useEffect</div>
+              <div class="lesson-meta"><span>⏱ 15 min</span><span>10 exercices</span></div>
+            </div>
+            <div class="lesson-status">▶️</div>
+          </div>
+          <div class="lesson-item">
+            <div class="lesson-num locked">4</div>
+            <div class="lesson-info">
+              <div class="lesson-name">Props & State avancé</div>
+              <div class="lesson-meta"><span>⏱ 14 min</span><span>9 exercices</span></div>
+            </div>
+            <div class="lesson-status">🔒</div>
+          </div>
+          <div class="lesson-item">
+            <div class="lesson-num locked">5</div>
+            <div class="lesson-info">
+              <div class="lesson-name">React Router & Navigation</div>
+              <div class="lesson-meta"><span>⏱ 18 min</span><span>12 exercices</span></div>
+            </div>
+            <div class="lesson-status">🔒</div>
+          </div>
+        </div>
+
+        <div class="lecture-content">
+          <div class="lecture-eyebrow">Leçon 3 · En cours</div>
+          <div class="lecture-heading">useState : gérer l'état local d'un composant</div>
+          <p class="lecture-p">
+            Le Hook <code style="font-family:var(--font-code);color:var(--orange);background:#fff3e0;padding:1px 5px;border-radius:4px;">useState</code> est l'un des Hooks fondamentaux de React. Il permet d'ajouter de la réactivité à tes composants : chaque fois que l'état change, React re-rend automatiquement le composant.
+          </p>
+          <div class="code-block"><pre><span class="code-kw">import</span> { useState } <span class="code-kw">from</span> <span class="code-str">'react'</span>
+
+<span class="code-kw">function</span> <span class="code-fn">Compteur</span>() {
+  <span class="code-kw">const</span> [count, setCount] = useState(<span class="code-str">0</span>)
+
+  <span class="code-kw">return</span> (
+    <span class="code-tag">&lt;div&gt;</span>
+      <span class="code-tag">&lt;p&gt;</span>Valeur : {count}<span class="code-tag">&lt;/p&gt;</span>
+      <span class="code-tag">&lt;button</span> onClick={() => setCount(count + <span class="code-str">1</span>)}<span class="code-tag">&gt;</span>
+        Incrémenter
+      <span class="code-tag">&lt;/button&gt;</span>
+    <span class="code-tag">&lt;/div&gt;</span>
+  )
+}</pre></div>
+          <div class="info-box">
+            <p><strong>💡 À retenir :</strong> <code style="font-family:var(--font-code);">useState</code> retourne un tableau de deux éléments : la valeur actuelle et une fonction pour la modifier. Ne modifie jamais l'état directement — toujours passer par la fonction setter.</p>
+          </div>
+          <button class="continue-btn" onclick="goTo('s-exercices')">Passer aux exercices →</button>
+        </div>
+
+      </div>
+      <div class="fade-bottom"></div>
+    </div>
+
+    <!-- ══ SCREEN 3 : EXERCICES ══ -->
+    <div class="screen" id="s-exercices">
+
+      <div class="exercise-header">
+        <button class="back-btn" onclick="goTo('s-cours')" style="color:rgba(255,255,255,0.7);">← Leçon 3</button>
+        <div class="exercise-title-h">Exercices React</div>
+        <div class="exercise-sub">Hooks : useState & useEffect</div>
+        <div class="ex-progress-row">
+          <span class="ex-progress-label">Progression</span>
+          <span class="ex-progress-val" id="ex-progress-val">1 / 3</span>
+        </div>
+        <div class="ex-bar-wrap"><div class="ex-bar-fill" id="ex-bar-fill"></div></div>
+      </div>
+
+      <div class="exercise-body">
+
+        <!-- Q1 : QCM -->
+        <div id="q1" class="question-section">
+          <div class="question-card">
+            <div class="q-badge">🎯 QCM</div>
+            <div class="q-text">Que retourne le Hook <span class="q-code-inline">useState(0)</span> lors de son initialisation ?</div>
+            <div class="options-list">
+              <div class="option-item" onclick="selectOption(this, false)">
+                <div class="option-letter">A</div>
+                <div class="option-text">Un entier valant 0</div>
+              </div>
+              <div class="option-item" onclick="selectOption(this, true)">
+                <div class="option-letter">B</div>
+                <div class="option-text">Un tableau <code style="font-family:var(--font-code);">[valeur, setterFn]</code></div>
+              </div>
+              <div class="option-item" onclick="selectOption(this, false)">
+                <div class="option-letter">C</div>
+                <div class="option-text">Un objet avec la clé <code style="font-family:var(--font-code);">state</code></div>
+              </div>
+              <div class="option-item" onclick="selectOption(this, false)">
+                <div class="option-letter">D</div>
+                <div class="option-text">Une promesse résolue à 0</div>
+              </div>
+            </div>
+            <div class="feedback-box" id="fb-q1">
+              <p></p>
+            </div>
+          </div>
+          <div class="ex-btn-row">
+            <button class="btn-check" onclick="checkQ1()">Vérifier</button>
+            <button class="btn-next" onclick="showQ(2)">Suivant →</button>
+          </div>
+        </div>
+
+        <!-- Q2 : Vrai/Faux -->
+        <div id="q2" class="question-section" style="display:none;">
+          <div class="question-card">
+            <div class="q-badge">✔ Vrai / Faux</div>
+            <div class="q-text">On peut appeler <span class="q-code-inline">useState</span> directement à l'intérieur d'une condition <code style="font-family:var(--font-code);">if</code> en React.</div>
+            <div class="tf-row">
+              <div class="tf-btn" id="tf-true" onclick="selectTF(true)">✅ Vrai</div>
+              <div class="tf-btn" id="tf-false" onclick="selectTF(false)">❌ Faux</div>
+            </div>
+            <div class="feedback-box" id="fb-q2">
+              <p></p>
+            </div>
+          </div>
+          <div class="ex-btn-row">
+            <button class="btn-check" onclick="checkQ2()">Vérifier</button>
+            <button class="btn-next" onclick="showQ(3)">Suivant →</button>
+          </div>
+        </div>
+
+        <!-- Q3 : Trou à remplir -->
+        <div id="q3" class="question-section" style="display:none;">
+          <div class="question-card">
+            <div class="q-badge">⌨️ Trou à remplir</div>
+            <div class="q-text">Complète le code pour déclarer un état initialisé à <code style="font-family:var(--font-code);">false</code> :</div>
+            <div class="code-block" style="margin-bottom:12px;"><pre><span class="code-kw">const</span> [isOpen, setIsOpen] = <span id="blank-placeholder" style="background:#333;color:#aaa;padding:1px 4px;border-radius:3px;">______</span>(<span class="code-str">false</span>)</pre></div>
+            <input class="fill-blank-input" id="fill-input" placeholder="Tapez le Hook ici..." oninput="updatePlaceholder(this.value)" />
+            <div class="feedback-box" id="fb-q3">
+              <p></p>
+            </div>
+          </div>
+          <div class="ex-btn-row">
+            <button class="btn-check" onclick="checkQ3()">Vérifier</button>
+            <button class="btn-next orange-btn" onclick="goTo('s-certifs')">Voir mes certifs 🎓</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ SCREEN 4 : CERTIFICATIONS ══ -->
+    <div class="screen" id="s-certifs">
+
+      <div class="cert-header">
+        <button class="back-btn" onclick="goTo('s-home')" style="color:rgba(255,255,255,0.7);">← Accueil</button>
+        <div class="cert-title-h">Mes Certifications</div>
+        <div class="cert-sub">Vérifiables par QR code · PDF officiel</div>
+      </div>
+
+      <div class="cert-body">
+
+        <!-- Featured cert -->
+        <div class="section-heading" style="margin-bottom:12px;">Certificat en vedette</div>
+        <div class="cert-card">
+          <div class="cert-logo-row">
+            <div class="cert-logo-mark">&lt;/&gt;</div>
+            <div class="cert-logo-label"><span style="color:var(--orange-light);">Dev</span>Edu<span style="color:#aaa;">Forge</span></div>
+            <div class="cert-official-tag">Officiel</div>
+          </div>
+
+          <div class="cert-headline">Certifie que</div>
+          <div class="cert-recipient">Mohamed Ouchen</div>
+          <div class="cert-achievement">
+            a complété avec succès le parcours <strong>Python — Développement & Automatisation</strong> et maîtrise les compétences techniques validées par DevEduForge.
+          </div>
+
+          <div class="cert-tech-badge">
+            <div class="cert-tech-icon">🐍</div>
+            <div>
+              <div class="cert-tech-name">Python</div>
+              <div class="cert-tech-level">Niveau intermédiaire</div>
+            </div>
+          </div>
+
+          <div class="cert-score-row">
+            <div class="score-circle-wrap">
+              <div class="score-circle">
+                <div class="score-circle-inner">91%</div>
+              </div>
+              <div class="score-label">Score</div>
+            </div>
+            <div class="skills-earned">
+              <div class="skill-tag">Variables & Fonctions</div>
+              <div class="skill-tag">POO & Classes</div>
+              <div class="skill-tag">APIs & Requêtes</div>
+              <div class="skill-tag">Automatisation</div>
+            </div>
+          </div>
+
+          <div class="cert-divider"></div>
+          <div class="cert-meta-row">
+            <div class="cert-meta-item">
+              <div class="cert-meta-label">Date d'obtention</div>
+              <div class="cert-meta-val">24 mai 2026</div>
+            </div>
+            <div class="cert-meta-item">
+              <div class="cert-meta-label">ID Certificat</div>
+              <div class="cert-meta-val">DEF-PY-2026-0441</div>
+            </div>
+          </div>
+
+          <div class="cert-bottom-row">
+            <div>
+              <div class="cert-qr">
+                <svg viewBox="0 0 21 21" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="21" height="21" fill="white"/>
+                  <!-- QR pattern simulation -->
+                  <g fill="#1a1a2e">
+                    <rect x="1" y="1" width="7" height="7"/><rect x="2" y="2" width="5" height="5" fill="white"/>
+                    <rect x="3" y="3" width="3" height="3"/>
+                    <rect x="13" y="1" width="7" height="7"/><rect x="14" y="2" width="5" height="5" fill="white"/>
+                    <rect x="15" y="3" width="3" height="3"/>
+                    <rect x="1" y="13" width="7" height="7"/><rect x="2" y="14" width="5" height="5" fill="white"/>
+                    <rect x="3" y="15" width="3" height="3"/>
+                    <rect x="9" y="1" width="1" height="3"/><rect x="11" y="1" width="1" height="1"/>
+                    <rect x="9" y="5" width="2" height="2"/><rect x="9" y="9" width="3" height="1"/>
+                    <rect x="13" y="9" width="2" height="2"/><rect x="16" y="9" width="2" height="3"/>
+                    <rect x="9" y="13" width="2" height="2"/><rect x="12" y="13" width="3" height="1"/>
+                    <rect x="9" y="16" width="1" height="3"/><rect x="12" y="16" width="2" height="2"/>
+                    <rect x="15" y="14" width="4" height="2"/><rect x="11" y="19" width="3" height="1"/>
+                    <rect x="16" y="17" width="2" height="3"/>
+                  </g>
+                </svg>
+              </div>
+              <div class="cert-qr-label">Scanner pour<br>vérifier</div>
+            </div>
+            <div class="cert-signature">
+              <div class="cert-sig-line"></div>
+              <div class="cert-sig-name">DevEduForge</div>
+              <div class="cert-sig-role">Faculté Polydisciplinaire · Taroudant</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="download-btn">⬇ Télécharger en PDF</button>
+        <button class="share-btn">↗ Partager le certificat</button>
+
+        <div class="section-heading" style="margin-top:20px; margin-bottom:12px;">Toutes mes certifications</div>
+        <div class="all-certs">
+          <div class="cert-list-item">
+            <div class="cert-list-icon" style="background:#e3f2fd;">🐍</div>
+            <div class="cert-list-info">
+              <div class="cert-list-tech">Python · Développement</div>
+              <div class="cert-list-date">DEF-PY-2026-0441 · 24 mai 2026</div>
+            </div>
+            <div class="cert-list-score">91%</div>
+          </div>
+          <div class="cert-list-item">
+            <div class="cert-list-icon" style="background:#e8f5e9;">🐳</div>
+            <div class="cert-list-info">
+              <div class="cert-list-tech">Docker · DevOps</div>
+              <div class="cert-list-date">DEF-DK-2026-0289 · 10 mai 2026</div>
+            </div>
+            <div class="cert-list-score">85%</div>
+          </div>
+          <div class="cert-list-item">
+            <div class="cert-list-icon" style="background:#fce4ec;">🐧</div>
+            <div class="cert-list-info">
+              <div class="cert-list-tech">Linux · Systèmes</div>
+              <div class="cert-list-date">DEF-LX-2026-0112 · 28 avr. 2026</div>
+            </div>
+            <div class="cert-list-score">88%</div>
+          </div>
+          <div class="cert-locked-item">
+            <div class="cert-list-icon" style="background:#f5f5f5;">⚛️</div>
+            <div class="cert-list-info">
+              <div class="cert-list-tech">React.js — En cours</div>
+              <div class="cert-list-date">Finir le module pour débloquer</div>
+            </div>
+            <div style="font-size:1.1rem;">🔒</div>
+          </div>
+        </div>
+
+      </div>
+      <div class="fade-bottom"></div>
+    </div>
+
+    <!-- ══ SCREEN 5 : PROFIL ══ -->
+    <div class="screen" id="s-profil">
+
+      <div class="profile-header">
+        <div class="profile-avatar">MO</div>
+        <div class="profile-name">Mohamed Ouchen</div>
+        <div class="profile-email">m.ouchen@fpt.ma</div>
+        <div class="profile-badge">⭐ Premium Étudiant · 35 MAD/mois</div>
+        <div class="offline-indicator"><div class="offline-dot"></div>Mode hors ligne activé</div>
+      </div>
+
+      <div class="profile-body">
+
+        <div class="profile-stats">
+          <div class="profile-stat">
+            <div class="profile-stat-val">42</div>
+            <div class="profile-stat-label">Leçons</div>
+          </div>
+          <div class="profile-stat">
+            <div class="profile-stat-val orange">3</div>
+            <div class="profile-stat-label">Certifs</div>
+          </div>
+          <div class="profile-stat">
+            <div class="profile-stat-val">12</div>
+            <div class="profile-stat-label">Jours</div>
+          </div>
+        </div>
+
+        <div class="offline-toggle-row">
+          <div class="toggle-icon">📴</div>
+          <div class="toggle-info">
+            <div class="toggle-title">Mode hors ligne</div>
+            <div class="toggle-sub">Cours disponibles sans internet</div>
+          </div>
+          <div class="toggle-switch"><div class="toggle-thumb"></div></div>
+        </div>
+
+        <div class="menu-section-title" style="margin-bottom:8px;">Compte</div>
+        <div class="menu-list">
+          <div class="menu-item">
+            <div class="menu-item-icon" style="background:#e8eeff;">👤</div>
+            <div class="menu-item-text">Mon profil</div>
+            <div class="menu-item-arrow">›</div>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-icon" style="background:#fff3e0;">⭐</div>
+            <div class="menu-item-text">Abonnement Premium</div>
+            <div class="menu-item-tag">Actif</div>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-icon" style="background:#e8f5e9;">🎓</div>
+            <div class="menu-item-text">Mes certifications</div>
+            <div class="menu-item-arrow">›</div>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-icon" style="background:#fce4ec;">🏆</div>
+            <div class="menu-item-text">Classement</div>
+            <div class="menu-item-arrow">›</div>
+          </div>
+        </div>
+
+        <div class="menu-section-title">Paramètres</div>
+        <div class="menu-list">
+          <div class="menu-item">
+            <div class="menu-item-icon" style="background:#f3e5f5;">🔔</div>
+            <div class="menu-item-text">Notifications</div>
+            <div class="menu-item-arrow">›</div>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-icon" style="background:#e0f7fa;">🌐</div>
+            <div class="menu-item-text">Langue</div>
+            <div style="font-size:0.75rem;color:var(--texte-light);font-family:var(--font-code);">Français</div>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-icon" style="background:#f5f5f5;">🤝</div>
+            <div class="menu-item-text">Parrainage</div>
+            <div class="menu-item-arrow">›</div>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-icon" style="background:#ffebee;">🚪</div>
+            <div class="menu-item-text" style="color:#c62828;">Se déconnecter</div>
+          </div>
+        </div>
+
+        <div style="text-align:center;margin-top:16px;margin-bottom:4px;">
+          <div style="font-family:var(--font-code);font-size:0.62rem;color:#bbb;">DevEduForge v1.0.0 · Faculté Polydisciplinaire Taroudant</div>
+          <div style="font-family:var(--font-code);font-size:0.58rem;color:#ccc;margin-top:2px;">«&nbsp;Forgez votre avenir dans la tech&nbsp;»</div>
+        </div>
+
+      </div>
+      <div class="fade-bottom"></div>
+    </div>
+
+    <!-- ══ SCREEN: DOMAINES ══ -->
+    <div class="screen" id="s-domaines">
+      <div class="domaines-header">
+        <button class="back-btn" onclick="goTo('s-home')">← Accueil</button>
+        <div class="domaines-title">Tous les domaines</div>
+        <div class="domaines-sub">Choisissez un domaine pour explorer ses technologies</div>
+      </div>
+      <div class="domaines-body">
+        <div class="domain-grid">
+
+          <div class="domain-big-card" style="background:linear-gradient(145deg,#00205B,#1a3a7a);" onclick="openDomain('prog')">
+            <div class="dbc-arrow">›</div>
+            <div>
+              <div class="dbc-icon">💻</div>
+              <div class="dbc-name">Programmation</div>
+              <div class="dbc-count">5 technologies</div>
+            </div>
+            <div>
+              <div style="font-size:0.6rem;color:rgba(255,255,255,0.5);margin-bottom:3px;font-family:var(--font-title);font-weight:600;">PROGRESSION</div>
+              <div class="dbc-progress-bar"><div class="dbc-progress-fill" style="width:60%"></div></div>
+            </div>
+          </div>
+
+          <div class="domain-big-card" style="background:linear-gradient(145deg,#1b4332,#2d6a4f);" onclick="openDomain('devops')">
+            <div class="dbc-arrow">›</div>
+            <div>
+              <div class="dbc-icon">🔧</div>
+              <div class="dbc-name">DevOps</div>
+              <div class="dbc-count">5 technologies</div>
+            </div>
+            <div>
+              <div style="font-size:0.6rem;color:rgba(255,255,255,0.5);margin-bottom:3px;font-family:var(--font-title);font-weight:600;">PROGRESSION</div>
+              <div class="dbc-progress-bar"><div class="dbc-progress-fill" style="width:30%"></div></div>
+            </div>
+          </div>
+
+          <div class="domain-big-card" style="background:linear-gradient(145deg,#4a1942,#7b2d8b);" onclick="openDomain('os')">
+            <div class="dbc-arrow">›</div>
+            <div>
+              <div class="dbc-icon">🖥️</div>
+              <div class="dbc-name">Systèmes OS</div>
+              <div class="dbc-count">3 technologies</div>
+            </div>
+            <div>
+              <div style="font-size:0.6rem;color:rgba(255,255,255,0.5);margin-bottom:3px;font-family:var(--font-title);font-weight:600;">PROGRESSION</div>
+              <div class="dbc-progress-bar"><div class="dbc-progress-fill" style="width:33%"></div></div>
+            </div>
+          </div>
+
+          <div class="domain-big-card" style="background:linear-gradient(145deg,#7b3100,#E65100);" onclick="openDomain('ai')">
+            <div class="dbc-arrow">›</div>
+            <div>
+              <div class="dbc-icon">🤖</div>
+              <div class="dbc-name">IA & LLMs</div>
+              <div class="dbc-count">4 technologies</div>
+            </div>
+            <div>
+              <div style="font-size:0.6rem;color:rgba(255,255,255,0.5);margin-bottom:3px;font-family:var(--font-title);font-weight:600;">PROGRESSION</div>
+              <div class="dbc-progress-bar"><div class="dbc-progress-fill" style="width:5%"></div></div>
+            </div>
+          </div>
+
+        </div>
+
+        <div style="margin-top:20px;">
+          <div class="section-heading">En cours d'apprentissage</div>
+          <div class="continue-card" onclick="openTech('prog',0)" style="margin-bottom:0">
+            <div class="continue-thumb">⚛️</div>
+            <div class="continue-info">
+              <div class="continue-tech">Programmation · React.js</div>
+              <div class="continue-title">Leçon 3 — Hooks : useState & useEffect</div>
+              <div class="mini-bar-wrap"><div class="mini-bar-fill"></div></div>
+            </div>
+            <div class="continue-arrow">›</div>
+          </div>
+        </div>
+      </div>
+      <div class="fade-bottom"></div>
+    </div>
+
+    <!-- ══ SCREEN: TECH LIST ══ -->
+    <div class="screen" id="s-tech">
+      <div class="tech-header" id="tech-screen-header">
+        <button class="back-btn" onclick="goTo('s-domaines')">← Domaines</button>
+        <div class="tech-domain-eyebrow">
+          <div class="tech-domain-icon-big" id="tech-domain-icon">💻</div>
+          <div class="tech-domain-info">
+            <div class="tech-domain-name-h" id="tech-domain-name">Programmation</div>
+            <div class="tech-domain-count-h" id="tech-domain-count">5 technologies</div>
+          </div>
+        </div>
+      </div>
+      <div class="tech-body">
+        <div class="section-heading" style="margin-bottom:12px;">Choisissez une technologie</div>
+        <div class="tech-list" id="tech-list">
+          <!-- Populated dynamically by openDomain() -->
+        </div>
+      </div>
+      <div class="fade-bottom"></div>
+    </div>
+
+  </div><!-- /screens -->
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="nav-item active" id="nav-home" onclick="goTo('s-home')">
+      <div class="nav-icon">🏠</div>
+      <div class="nav-label">Accueil</div>
+    </div>
+    <div class="nav-item" id="nav-cours" onclick="goTo('s-domaines')">
+      <div class="nav-icon">📚</div>
+      <div class="nav-label">Cours</div>
+    </div>
+    <div class="nav-item" id="nav-exercices" onclick="goTo('s-exercices')">
+      <div class="nav-icon">✏️</div>
+      <div class="nav-label">Exercices</div>
+    </div>
+    <div class="nav-item" id="nav-certifs" onclick="goTo('s-certifs')">
+      <div class="nav-icon">🎓</div>
+      <div class="nav-label">Certifs</div>
+    </div>
+    <div class="nav-item" id="nav-profil" onclick="goTo('s-profil')">
+      <div class="nav-icon">👤</div>
+      <div class="nav-label">Profil</div>
+    </div>
+  </div>
+
+</div><!-- /phone -->
+
+<script>
+/* ── DOMAIN DATA ── */
+const DOMAINS = {
+  prog: {
+    name: 'Programmation',
+    icon: '💻',
+    gradient: 'linear-gradient(145deg,#00205B,#1a3a7a)',
+    color: '#00205B',
+    techs: [
+      { icon:'⚛️', name:'React.js', level:'Intermédiaire', lessons:7, done:3, active:true },
+      { icon:'🐍', name:'Python',   level:'Débutant → Avancé', lessons:9, done:9, cert:true },
+      { icon:'🌐', name:'HTML & CSS', level:'Débutant', lessons:6, done:6, cert:true },
+      { icon:'⚡', name:'JavaScript', level:'Intermédiaire', lessons:8, done:0 },
+      { icon:'🔷', name:'C++',       level:'Avancé', lessons:10, done:0 },
+    ]
+  },
+  devops: {
+    name: 'DevOps',
+    icon: '🔧',
+    gradient: 'linear-gradient(145deg,#1b4332,#2d6a4f)',
+    color: '#1b4332',
+    techs: [
+      { icon:'🐳', name:'Docker',     level:'Intermédiaire', lessons:8, done:8, cert:true },
+      { icon:'☸️', name:'Kubernetes', level:'Avancé', lessons:10, done:2 },
+      { icon:'🔀', name:'Git & GitHub', level:'Débutant', lessons:6, done:4 },
+      { icon:'🏗️', name:'Jenkins',    level:'Intermédiaire', lessons:7, done:0 },
+      { icon:'📦', name:'npm & CI/CD', level:'Débutant', lessons:5, done:0 },
+    ]
+  },
+  os: {
+    name: 'Systèmes OS',
+    icon: '🖥️',
+    gradient: 'linear-gradient(145deg,#4a1942,#7b2d8b)',
+    color: '#4a1942',
+    techs: [
+      { icon:'🐧', name:'Linux',   level:'Débutant → Avancé', lessons:8, done:8, cert:true },
+      { icon:'🪟', name:'Windows Server', level:'Intermédiaire', lessons:6, done:0 },
+      { icon:'🍎', name:'macOS',   level:'Débutant', lessons:5, done:0 },
+    ]
+  },
+  ai: {
+    name: 'IA & LLMs',
+    icon: '🤖',
+    gradient: 'linear-gradient(145deg,#7b3100,#E65100)',
+    color: '#7b3100',
+    techs: [
+      { icon:'✍️', name:'Prompt Engineering', level:'Débutant', lessons:6, done:1 },
+      { icon:'🧠', name:'ChatGPT & GPT-4',    level:'Débutant', lessons:5, done:0 },
+      { icon:'🤖', name:'Claude (Anthropic)',  level:'Débutant', lessons:5, done:0 },
+      { icon:'⚙️', name:'n8n Automatisation', level:'Intermédiaire', lessons:7, done:0 },
+    ]
+  }
+};
+
+/* ── NAVIGATION ── */
+const screenMap = {
+  's-home':      'nav-home',
+  's-domaines':  'nav-cours',
+  's-tech':      'nav-cours',
+  's-cours':     'nav-cours',
+  's-exercices': 'nav-exercices',
+  's-certifs':   'nav-certifs',
+  's-profil':    'nav-profil',
+};
+
+function goTo(screenId) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+  document.getElementById(screenId).scrollTop = 0;
+  const navId = screenMap[screenId];
+  if (navId) document.getElementById(navId).classList.add('active');
+}
+
+function switchCourseTab(btn, tabId) {
+  document.querySelectorAll('.course-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+/* ── OPEN DOMAIN LIST ── */
+function openDomain(key) {
+  const d = DOMAINS[key];
+  if (!d) return;
+
+  // Build tech cards
+  const list = document.getElementById('tech-list');
+  list.innerHTML = d.techs.map((t, i) => {
+    const pct = t.lessons > 0 ? Math.round((t.done / t.lessons) * 100) : 0;
+    const statusIcon = t.cert ? '🎓' : (t.done === t.lessons && t.lessons > 0 ? '✅' : (t.done > 0 ? '▶️' : '🔒'));
+    const statusLabel = t.cert ? 'Certifié' : (t.done === t.lessons && t.lessons > 0 ? 'Terminé' : (t.done > 0 ? 'En cours' : 'Non commencé'));
+    const statusColor = t.cert || (t.done === t.lessons && t.lessons > 0) ? '#2e7d32' : (t.done > 0 ? 'var(--orange)' : 'var(--texte-light)');
+    return `
+    <div class="tech-card" onclick="openTech('${key}',${i})">
+      <div class="tech-card-icon">${t.icon}</div>
+      <div class="tech-card-info">
+        <div class="tech-card-name">${t.name}</div>
+        <div class="tech-card-level">${t.level} · ${t.lessons} leçons</div>
+        <div class="tech-mini-bar-wrap">
+          <div class="tech-mini-bar-fill" style="width:${pct}%"></div>
+        </div>
+      </div>
+      <div class="tech-card-right">
+        <div class="tech-status-icon">${statusIcon}</div>
+        <div class="tech-status-label" style="color:${statusColor}">${statusLabel}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Update header
+  document.getElementById('tech-screen-header').style.background = d.gradient;
+  document.getElementById('tech-domain-icon').textContent = d.icon;
+  document.getElementById('tech-domain-name').textContent = d.name;
+  document.getElementById('tech-domain-count').textContent = d.techs.length + ' technologies';
+
+  goTo('s-tech');
+}
+
+/* ── OPEN SPECIFIC TECH (goes to lesson screen) ── */
+function openTech(domainKey, techIdx) {
+  const d = DOMAINS[domainKey];
+  const t = d.techs[techIdx];
+  // Update course header to reflect selected tech
+  document.querySelector('#s-cours .course-domain-tag').textContent = d.name;
+  document.querySelector('#s-cours .course-title-h').innerHTML = t.name + '<br><span style="font-size:0.85rem;opacity:0.7;font-weight:600;">' + t.level + '</span>';
+  goTo('s-cours');
+}
+
+/* ── EXERCISES ── */
+let selectedOption = null;
+let selectedTFValue = null;
+let currentQ = 1;
+
+function selectOption(el, isCorrect) {
+  document.querySelectorAll('.option-item').forEach(o => o.classList.remove('selected', 'correct', 'wrong'));
+  el.classList.add('selected');
+  selectedOption = isCorrect;
+  hideFeedback('fb-q1');
+}
+
+function checkQ1() {
+  const fb = document.getElementById('fb-q1');
+  if (selectedOption === null) {
+    fb.className = 'feedback-box show error';
+    fb.querySelector('p').innerHTML = '⚠️ Sélectionne une réponse avant de vérifier.';
+    return;
+  }
+  document.querySelectorAll('#q1 .option-item').forEach(o => {
+    if (o.classList.contains('selected')) {
+      o.classList.add(selectedOption ? 'correct' : 'wrong');
+    }
+  });
+  if (selectedOption) {
+    fb.className = 'feedback-box show success';
+    fb.querySelector('p').innerHTML = '✅ <strong>Correct !</strong> useState retourne toujours un tableau avec la valeur et la fonction de mise à jour, utilisé avec la déstructuration.';
+    updateExProgress(2);
+  } else {
+    fb.className = 'feedback-box show error';
+    fb.querySelector('p').innerHTML = '❌ <strong>Pas tout à fait.</strong> useState retourne un tableau [valeur, setter]. La bonne réponse est B.';
+  }
+}
+
+function selectTF(val) {
+  selectedTFValue = val;
+  document.getElementById('tf-true').className = 'tf-btn' + (val === true ? ' selected-true' : '');
+  document.getElementById('tf-false').className = 'tf-btn' + (val === false ? ' selected-false' : '');
+  hideFeedback('fb-q2');
+}
+
+function checkQ2() {
+  const fb = document.getElementById('fb-q2');
+  if (selectedTFValue === null) {
+    fb.className = 'feedback-box show error';
+    fb.querySelector('p').innerHTML = '⚠️ Sélectionne Vrai ou Faux.';
+    return;
+  }
+  if (selectedTFValue === false) {
+    fb.className = 'feedback-box show success';
+    fb.querySelector('p').innerHTML = '✅ <strong>Exact — FAUX !</strong> Les Hooks ne doivent jamais être appelés dans des conditions, des boucles ou des fonctions imbriquées. C\'est une règle fondamentale des Hooks React.';
+    updateExProgress(3);
+  } else {
+    fb.className = 'feedback-box show error';
+    fb.querySelector('p').innerHTML = '❌ <strong>Incorrect.</strong> Appeler useState dans un if viole les règles des Hooks. React requiert que les Hooks soient appelés dans le même ordre à chaque rendu.';
+  }
+}
+
+function checkQ3() {
+  const val = document.getElementById('fill-input').value.trim();
+  const fb = document.getElementById('fb-q3');
+  if (!val) {
+    fb.className = 'feedback-box show error';
+    fb.querySelector('p').innerHTML = '⚠️ Tape ta réponse avant de vérifier.';
+    return;
+  }
+  if (val === 'useState') {
+    fb.className = 'feedback-box show success';
+    fb.querySelector('p').innerHTML = '🎉 <strong>Parfait !</strong> <code style="font-family:var(--font-code)">useState</code> est bien la bonne réponse. Tu as complété la leçon — va voir tes certifications !';
+    document.getElementById('fill-input').style.borderColor = 'var(--success)';
+    updateExProgress('done');
+  } else {
+    fb.className = 'feedback-box show error';
+    fb.querySelector('p').innerHTML = `❌ <strong>"${val}"</strong> n'est pas correct. Rappelle-toi : le Hook qui gère l'état local en React s'appelle <code style="font-family:var(--font-code)">useState</code>.`;
+    document.getElementById('fill-input').style.borderColor = '#c62828';
+  }
+}
+
+function showQ(n) {
+  document.querySelectorAll('.question-section').forEach(q => q.style.display = 'none');
+  document.getElementById('q' + n).style.display = 'block';
+  updateExProgress(n);
+  currentQ = n;
+}
+
+function hideFeedback(id) {
+  const fb = document.getElementById(id);
+  fb.className = 'feedback-box';
+}
+
+function updateExProgress(n) {
+  const bar = document.getElementById('ex-bar-fill');
+  const val = document.getElementById('ex-progress-val');
+  if (n === 'done') { bar.style.width = '100%'; val.textContent = '3 / 3 ✅'; return; }
+  const pcts = { 1: '33%', 2: '66%', 3: '100%' };
+  bar.style.width = pcts[n] || '33%';
+  val.textContent = `${n} / 3`;
+}
+
+function updatePlaceholder(v) {
+  const ph = document.getElementById('blank-placeholder');
+  ph.textContent = v || '______';
+  ph.style.color = v ? '#69f0ae' : '#aaa';
+  document.getElementById('fill-input').style.borderColor = '';
+  hideFeedback('fb-q3');
+}
+
+/* ── Animate progress bar on load ── */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('mainBar').style.width = '42%';
+  }, 300);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+import { Platform } from 'react-native';
+
+const fontFamily = Platform.select({
+  ios: {
+    display: 'Montserrat-Black',
+    h1: 'Montserrat-ExtraBold',
+    h2: 'Montserrat-Bold',
+    h3: 'Montserrat-Bold',
+    bodyLarge: 'OpenSans-Regular',
+    body: 'OpenSans-Regular',
+    bodySmall: 'OpenSans-Regular',
+    label: 'Montserrat-Bold',
+    code: 'SourceCodePro-Regular',
+    codeBold: 'SourceCodePro-SemiBold',
+    button: 'Montserrat-Bold',
+  },
+  android: {
+    display: 'Montserrat-Black',
+    h1: 'Montserrat-ExtraBold',
+    h2: 'Montserrat-Bold',
+    h3: 'Montserrat-Bold',
+    bodyLarge: 'OpenSans-Regular',
+    body: 'OpenSans-Regular',
+    bodySmall: 'OpenSans-Regular',
+    label: 'Montserrat-Bold',
+    code: 'SourceCodePro-Regular',
+    codeBold: 'SourceCodePro-SemiBold',
+    button: 'Montserrat-Bold',
+  },
+  default: {
+    display: 'Montserrat',
+    h1: 'Montserrat',
+    h2: 'Montserrat',
+    h3: 'Montserrat',
+    bodyLarge: 'OpenSans',
+    body: 'OpenSans',
+    bodySmall: 'OpenSans',
+    label: 'Montserrat',
+    code: 'SourceCodePro',
+    codeBold: 'SourceCodePro',
+    button: 'Montserrat',
+  },
+});
+
+export const typography = {
+  display: { fontFamily: fontFamily.display, fontSize: 28, lineHeight: 34, fontWeight: '900' as const },
+  h1: { fontFamily: fontFamily.h1, fontSize: 22, lineHeight: 28, fontWeight: '800' as const },
+  h2: { fontFamily: fontFamily.h2, fontSize: 18, lineHeight: 22, fontWeight: '700' as const },
+  h3: { fontFamily: fontFamily.h3, fontSize: 15, lineHeight: 20, fontWeight: '700' as const },
+  bodyLarge: { fontFamily: fontFamily.bodyLarge, fontSize: 16, lineHeight: 24, fontWeight: '400' as const },
+  body: { fontFamily: fontFamily.body, fontSize: 14, lineHeight: 21, fontWeight: '400' as const },
+  bodySmall: { fontFamily: fontFamily.bodySmall, fontSize: 12, lineHeight: 18, fontWeight: '400' as const },
+  label: { fontFamily: fontFamily.label, fontSize: 11, lineHeight: 14, fontWeight: '700' as const, letterSpacing: 0.5 },
+  code: { fontFamily: fontFamily.code, fontSize: 13, lineHeight: 20, fontWeight: '400' as const },
+  codeBold: { fontFamily: fontFamily.codeBold, fontSize: 13, lineHeight: 20, fontWeight: '600' as const },
+  button: { fontFamily: fontFamily.button, fontSize: 15, lineHeight: 20, fontWeight: '700' as const },
+} as const;
