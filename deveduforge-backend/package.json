@@ -26,6 +26,9 @@
     "docker:build": "docker build -t deveduforge-api .",
     "audit": "npm audit --audit-level=high"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "dependencies": {
     "@prisma/client": "^5.14.0",
     "bcrypt": "^5.1.1",
