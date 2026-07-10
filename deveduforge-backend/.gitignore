@@ -1,11 +1,82 @@
+# Dependencies
 node_modules/
+.pnp
+.pnp.js
+
+# Build output
 dist/
+build/
+lib/
+.esbuild/
+
+# Environment
 .env
 .env.local
-.env.test
-*.log
+.env.development.local
+.env.test.local
+.env.production.local
+.env.example
+
+# Logs
 logs/
-.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Prisma
+node_modules/.prisma/
+prisma/migrations/**/migration_lock.toml
+!prisma/migrations/migration_lock.toml
+
+# Coverage & test
 coverage/
-.tmp/
+.nyc_output/
+test-results/
+junit.xml
+*.tgz
+
+# IDE & editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.ioni
+.project
+.classpath
+.settings/
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+
+# TypeScript
 *.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# Temp & cache
+.tmp/
+tmp/
+.cache/
+.eslintcache
+.prettiercache
+
+# Uploads (local dev)
+uploads/
+
+# Docker
+docker-data/
+pgdata/
+
+# Sentry
+.sentryclirc
+
+# Serverless
+.serverless/
+
+# Misc
+*.pem
+*.cert

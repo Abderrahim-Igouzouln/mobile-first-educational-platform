@@ -1,0 +1,29 @@
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*~
+
+# Temp files
+.tmp/
+tmp/
+*.tmp
+
+# Logs
+*.log
+
+# Editor configs (personal)
+.ioni
+.project
+.classpath
+.settings/
+
+# Secrets (just in case)
+*.key
+*.pem
+*.p12
+.env
