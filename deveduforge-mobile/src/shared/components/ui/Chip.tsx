@@ -8,7 +8,7 @@ import { radius } from '../../constants/radius';
 interface ChipProps {
   label: string;
   selected: boolean;
-  onPress: () => void;
+  onPress?: () => void;
 }
 
 export const Chip: React.FC<ChipProps> = ({ label, selected, onPress }) => {

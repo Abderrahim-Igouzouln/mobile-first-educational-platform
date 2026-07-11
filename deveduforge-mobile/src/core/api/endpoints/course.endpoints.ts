@@ -27,8 +27,10 @@ export interface Course {
   thumbnail?: string;
   technologyId: string;
   lessonsCount: number;
+  lessonCount?: number;
   completedLessonsCount?: number;
   duration?: number;
+  estimatedDurationMin?: number;
   level?: string;
   isPremium: boolean;
   createdAt: string;
@@ -39,12 +41,15 @@ export interface Lesson {
   id: string;
   title: string;
   content?: string;
+  contentMarkdown?: string;
   videoUrl?: string;
   duration?: number;
+  durationMin?: number;
   order: number;
   courseId: string;
   isCompleted: boolean;
   isBookmarked: boolean;
+  exercisesCount?: number;
 }
 
 export interface Bookmark {
@@ -68,8 +73,8 @@ export const getDomains = async (): Promise<Domain[]> => {
 };
 
 export const getTechnologies = async (domainSlug: string): Promise<Technology[]> => {
-  const response = await apiClient.get<ApiResponse<Technology[]>>(`/courses/domains/${domainSlug}/technologies`);
-  return response.data.data;
+  const response = await apiClient.get<ApiResponse<{ domain: any; technologies: Technology[] }>>(`/courses/domains/${domainSlug}/technologies`);
+  return response.data.data.technologies;
 };
 
 export const getCourses = async (technologySlug: string): Promise<Course[]> => {

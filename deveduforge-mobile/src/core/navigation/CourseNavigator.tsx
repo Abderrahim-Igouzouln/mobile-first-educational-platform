@@ -8,6 +8,10 @@ import { LessonScreen } from '../../modules/courses/screens/LessonScreen';
 import { LectureScreen } from '../../modules/courses/screens/LectureScreen';
 import { VideoPlayerScreen } from '../../modules/courses/screens/VideoPlayerScreen';
 import { OfflineCoursesScreen } from '../../modules/courses/screens/OfflineCoursesScreen';
+import { ProjectsScreen } from '../../modules/projects/screens/ProjectsScreen';
+import { ProjectDetailScreen } from '../../modules/projects/screens/ProjectDetailScreen';
+import { ProjectSubmissionScreen } from '../../modules/projects/screens/ProjectSubmissionScreen';
+import { ProjectReviewScreen } from '../../modules/projects/screens/ProjectReviewScreen';
 
 const Stack = createNativeStackNavigator<CourseStackParamList>();
 
@@ -22,6 +26,10 @@ const screens: {
   { name: 'LectureScreen', component: LectureScreen },
   { name: 'VideoPlayerScreen', component: VideoPlayerScreen },
   { name: 'OfflineCoursesScreen', component: OfflineCoursesScreen },
+  { name: 'ProjectsScreen', component: ProjectsScreen },
+  { name: 'ProjectDetailScreen', component: ProjectDetailScreen },
+  { name: 'ProjectSubmissionScreen', component: ProjectSubmissionScreen },
+  { name: 'ProjectReviewScreen', component: ProjectReviewScreen },
 ];
 
 export default function CourseNavigator() {

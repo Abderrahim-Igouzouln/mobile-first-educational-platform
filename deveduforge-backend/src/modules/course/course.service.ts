@@ -61,6 +61,11 @@ export class CourseService {
     const progress = await repo.findUserProgressForCourse(userId, courseId);
     const progressMap = new Map(progress.map((p) => [p.lessonId, p.status]));
 
+    const bookmarks = await prisma.bookmark.findMany({
+      where: { userId, lessonId: { in: course.lessons.map((l) => l.id) } },
+    });
+    const bookmarkSet = new Set(bookmarks.map((b) => b.lessonId));
+
     let previousCompleted = true;
     const lessons = course.lessons.map((l) => {
       const status = progressMap.get(l.id) || 'not_started';
@@ -69,7 +74,19 @@ export class CourseService {
       else if (isLocked) previousCompleted = false;
       else previousCompleted = false;
 
-      return { id: l.id, title: l.title, order: l.order, durationMin: l.durationMin, videoUrl: l.videoUrl, isPublished: l.isPublished, status, isLocked, contentMarkdown: isLocked ? undefined : l.contentMarkdown };
+      return {
+        id: l.id,
+        title: l.title,
+        order: l.order,
+        durationMin: l.durationMin,
+        videoUrl: l.videoUrl,
+        isPublished: l.isPublished,
+        status,
+        isLocked,
+        contentMarkdown: isLocked ? undefined : l.contentMarkdown,
+        exercisesCount: l._count.exercises,
+        isBookmarked: bookmarkSet.has(l.id),
+      };
     });
 
     return { id: course.id, title: course.title, description: course.description, level: course.level, estimatedDurationMin: course.estimatedDurationMin, isPublished: course.isPublished, authorName: `${course.author.firstName} ${course.author.lastName}`, lessons };

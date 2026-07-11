@@ -40,6 +40,10 @@ export const handleResponseError = async (
     return Promise.reject(error);
   }
 
+  if (originalRequest.url?.includes('/auth/refresh')) {
+    return Promise.reject(error);
+  }
+
   if (isRefreshing) {
     return new Promise((resolve, reject) => {
       failedQueue.push({ resolve, reject });

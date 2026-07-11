@@ -98,8 +98,16 @@ export const LessonScreen: React.FC = () => {
       </ScrollView>
 
       <View style={styles.bottomBar}>
-        <Button variant="primary" fullWidth onPress={() => {}}>
-          Passer aux exercices
+        <Button
+          variant="primary"
+          fullWidth
+          onPress={() =>
+            navigation.getParent()?.navigate('ExercisesTab', { screen: 'ExercisesScreen', params: { lessonId } })
+          }
+        >
+          {lesson.exercisesCount > 0
+            ? `Passer aux exercices (${lesson.exercisesCount})`
+            : 'Passer aux exercices'}
         </Button>
       </View>
     </ScreenWrapper>

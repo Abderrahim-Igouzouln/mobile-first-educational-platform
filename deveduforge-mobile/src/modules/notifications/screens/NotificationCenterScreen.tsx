@@ -110,7 +110,7 @@ export function NotificationCenterScreen() {
           )}
         </View>
         {unreadCount > 0 && (
-          <Pressable onPress={() => markAllRead()} role="button">
+          <Pressable onPress={() => markAllRead()} role="button" accessibilityLabel="Tout marquer comme lu">
             <CheckCheck size={22} color={colors.brand.orange} />
           </Pressable>
         )}

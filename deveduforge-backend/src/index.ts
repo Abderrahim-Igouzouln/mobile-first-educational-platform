@@ -40,7 +40,7 @@ async function bootstrap(): Promise<void> {
       logger.info('HTTP server closed');
     });
     await prisma.$disconnect();
-    await redis.quit();
+    try { await redis.quit(); } catch { /* Redis not connected */ }
     process.exit(0);
   };
 

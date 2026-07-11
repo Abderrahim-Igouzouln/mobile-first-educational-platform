@@ -7,9 +7,11 @@ import {
   Pressable,
   StyleSheet,
   Platform,
+  Alert,
 } from 'react-native';
 import { ArrowLeft, FileUp, GitBranch, Send, X } from 'lucide-react-native';
-import type { ProjectStackParamList } from '../projects.types';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { colors } from '../../../shared/constants/colors';
 import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
@@ -17,13 +19,22 @@ import { radius } from '../../../shared/constants/radius';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
 import { Button } from '../../../shared/components/ui/Button';
 import { Input } from '../../../shared/components/ui/Input';
+import type { CourseStackParamList } from '../../../core/navigation/navigation.types';
+import { useProjectSubmission } from '../services/projectService';
+
+type NavProp = NativeStackNavigationProp<CourseStackParamList, 'ProjectSubmissionScreen'>;
+type ScreenRoute = RouteProp<CourseStackParamList, 'ProjectSubmissionScreen'>;
 
 export const ProjectSubmissionScreen: React.FC = () => {
+  const navigation = useNavigation<NavProp>();
+  const route = useRoute<ScreenRoute>();
+  const { projectId } = route.params;
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
   const [notes, setNotes] = useState('');
   const [files, setFiles] = useState<string[]>([]);
+  const submitMutation = useProjectSubmission();
 
   const handleAddFile = () => {
     setFiles((prev) => [...prev, `fichier-${prev.length + 1}.png`]);
@@ -36,7 +47,7 @@ export const ProjectSubmissionScreen: React.FC = () => {
   return (
     <ScreenWrapper>
       <View style={styles.topBar}>
-        <Pressable style={styles.backButton}>
+        <Pressable style={styles.backButton} onPress={() => navigation.goBack()} role="button" accessibilityLabel="Retour">
           <ArrowLeft size={20} color={colors.neutral.text} />
         </Pressable>
         <Text style={styles.topTitle}>Soumettre le projet</Text>
@@ -119,7 +130,20 @@ export const ProjectSubmissionScreen: React.FC = () => {
           />
         </View>
 
-        <Button icon={Send} fullWidth onPress={() => {}}>
+        <Button icon={Send} fullWidth loading={submitMutation.isPending} onPress={() => {
+          submitMutation.mutate(
+            { projectId, repositoryUrl: githubUrl || undefined, fileUrl: files[0] || undefined },
+            {
+              onSuccess: () => {
+                Alert.alert('Soumission réussie', 'Votre projet a été soumis avec succès.');
+                navigation.goBack();
+              },
+              onError: (err: any) => {
+                Alert.alert('Erreur', err instanceof Error ? err.message : 'Une erreur est survenue.');
+              },
+            },
+          );
+        }}>
           Soumettre
         </Button>
       </ScrollView>

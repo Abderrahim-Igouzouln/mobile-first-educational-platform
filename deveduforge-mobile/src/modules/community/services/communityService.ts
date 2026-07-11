@@ -108,3 +108,10 @@ export const useToggleJoinGroup = () =>
       await new Promise((resolve) => setTimeout(resolve, 300));
     },
   });
+
+export const useRequestMentorship = () =>
+  useMutation({
+    mutationFn: async (_mentorId: string) => {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+    },
+  });

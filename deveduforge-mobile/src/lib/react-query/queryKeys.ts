@@ -30,6 +30,11 @@ export const queryKeys = {
   },
   projects: {
     all: ['projects'] as const,
+    list: (courseId?: string) =>
+      [...queryKeys.projects.all, 'list', ...(courseId ? [courseId] : [])] as const,
+    detail: (projectId: string) =>
+      [...queryKeys.projects.all, 'detail', projectId] as const,
+    my: () => [...queryKeys.projects.all, 'my'] as const,
   },
   notifications: {
     all: ['notifications'] as const,

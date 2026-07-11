@@ -3,12 +3,14 @@ import { initReactI18next } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import fr from './locales/fr';
 import ar from './locales/ar';
+import en from './locales/en';
 
 const LANGUAGE_KEY = '@deveduforge_language';
 
 const resources = {
   fr,
   ar,
+  en,
 };
 
 const initI18n = async () => {

@@ -6,8 +6,11 @@ import {
   TextInput,
   Pressable,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import { Search, Plus, Users } from 'lucide-react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
 import { Card } from '../../../shared/components/ui/Card';
 import { Button } from '../../../shared/components/ui/Button';
@@ -19,10 +22,14 @@ import { radius } from '../../../shared/constants/radius';
 import { shadows } from '../../../shared/constants/shadows';
 import { useStudyGroups, useToggleJoinGroup } from '../services/communityService';
 import type { StudyGroup } from '../community.types';
+import type { CommunityStackParamList } from '../../../core/navigation/navigation.types';
+
+type NavProp = NativeStackNavigationProp<CommunityStackParamList, 'StudyGroupsScreen'>;
 
 const FILTERS = ['Tous', 'Rejoints', 'Programmation', 'DevOps', 'Mobile', 'Data Science', 'Design', 'Backend'];
 
 export default function StudyGroupsScreen() {
+  const navigation = useNavigation<NavProp>();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('Tous');
   const { data: fetchedGroups = [] } = useStudyGroups();
@@ -110,7 +117,7 @@ export default function StudyGroupsScreen() {
               <StudyGroupCard
                 key={group.id}
                 group={group}
-                onPress={() => {}}
+                onPress={() => navigation.navigate('StudyGroupDetailScreen', { groupId: group.id })}
                 onJoinToggle={handleJoinToggle}
               />
             ))}
@@ -123,7 +130,7 @@ export default function StudyGroupsScreen() {
           <Text style={styles.createText}>
             Créez votre propre groupe d'étude et invitez d'autres membres à vous rejoindre.
           </Text>
-          <Button variant="primary" icon={Plus} onPress={() => {}}>
+          <Button variant="primary" icon={Plus} onPress={() => Alert.alert('Créer un groupe', 'Cette fonctionnalité sera bientôt disponible.')}>
             Créer un groupe
           </Button>
         </Card>

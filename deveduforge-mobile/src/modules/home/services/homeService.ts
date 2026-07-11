@@ -65,6 +65,7 @@ export const useDomains = () =>
       return data.map(
         (d): Domain => ({
           id: d.id,
+          slug: d.slug,
           name: d.name,
           techCount: 0,
           isActive: true,

@@ -21,6 +21,8 @@ import DiscussionScreen from '../../modules/community/screens/DiscussionScreen';
 import NewPostScreen from '../../modules/community/screens/NewPostScreen';
 import MentorshipScreen from '../../modules/community/screens/MentorshipScreen';
 import StudyGroupsScreen from '../../modules/community/screens/StudyGroupsScreen';
+import StudyGroupDetailScreen from '../../modules/community/screens/StudyGroupDetailScreen';
+import MentorProfileScreen from '../../modules/community/screens/MentorProfileScreen';
 import { ExercisesScreen } from '../../modules/exercises/screens/ExercisesScreen';
 import { QuizScreen } from '../../modules/exercises/screens/QuizScreen';
 import { ExerciseResultScreen } from '../../modules/exercises/screens/ExerciseResultScreen';
@@ -65,6 +67,8 @@ const CommunityNavigator = () => (
     <CommunityStack.Screen name="NewPostScreen" component={NewPostScreen} />
     <CommunityStack.Screen name="MentorshipScreen" component={MentorshipScreen} />
     <CommunityStack.Screen name="StudyGroupsScreen" component={StudyGroupsScreen} />
+    <CommunityStack.Screen name="StudyGroupDetailScreen" component={StudyGroupDetailScreen} />
+    <CommunityStack.Screen name="MentorProfileScreen" component={MentorProfileScreen} />
   </CommunityStack.Navigator>
 );
 

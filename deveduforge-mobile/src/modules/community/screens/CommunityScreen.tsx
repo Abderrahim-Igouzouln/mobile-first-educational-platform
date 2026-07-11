@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, View, Text, Pressable, StyleSheet } from 'react-native';
 import { Plus, Users, MessageSquare, Circle, TrendingUp } from 'lucide-react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
 import { DiscussionCard } from '../components/DiscussionCard';
 import { StudyGroupCard } from '../components/StudyGroupCard';
@@ -12,8 +14,12 @@ import { radius } from '../../../shared/constants/radius';
 import { shadows } from '../../../shared/constants/shadows';
 import { useTrendingTopics, useDiscussions, useStudyGroups, useToggleJoinGroup } from '../services/communityService';
 import type { StudyGroup } from '../community.types';
+import type { CommunityStackParamList } from '../../../core/navigation/navigation.types';
+
+type NavProp = NativeStackNavigationProp<CommunityStackParamList, 'CommunityScreen'>;
 
 export default function CommunityScreen() {
+  const navigation = useNavigation<NavProp>();
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const { data: topics = [] } = useTrendingTopics();
   const { data: discussions = [] } = useDiscussions();
@@ -89,7 +95,7 @@ export default function CommunityScreen() {
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
             {discussions.slice(0, 4).map((discussion) => (
               <View key={discussion.id} style={styles.horizontalCard}>
-                <DiscussionCard discussion={discussion} onPress={() => {}} compact />
+                <DiscussionCard discussion={discussion} onPress={() => navigation.navigate('DiscussionScreen', { discussionId: discussion.id })} compact />
               </View>
             ))}
           </ScrollView>
@@ -98,7 +104,7 @@ export default function CommunityScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Questions récentes</Text>
           {discussions.map((discussion) => (
-            <DiscussionCard key={discussion.id} discussion={discussion} onPress={() => {}} />
+            <DiscussionCard key={discussion.id} discussion={discussion} onPress={() => navigation.navigate('DiscussionScreen', { discussionId: discussion.id })} />
           ))}
         </View>
 
@@ -109,7 +115,7 @@ export default function CommunityScreen() {
               <StudyGroupCard
                 key={group.id}
                 group={group}
-                onPress={() => {}}
+                onPress={() => navigation.navigate('StudyGroupDetailScreen', { groupId: group.id })}
                 onJoinToggle={handleJoinToggle}
               />
             ))}
@@ -123,6 +129,7 @@ export default function CommunityScreen() {
         style={styles.fab}
         role="button"
         accessibilityLabel="Nouvelle publication"
+        onPress={() => navigation.navigate('NewPostScreen')}
       >
         <Plus size={24} color={colors.neutral.surface} />
       </Pressable>

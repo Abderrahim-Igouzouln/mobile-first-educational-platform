@@ -38,6 +38,8 @@ export type CommunityStackParamList = {
   NewPostScreen: undefined;
   MentorshipScreen: undefined;
   StudyGroupsScreen: undefined;
+  StudyGroupDetailScreen: { groupId: string };
+  MentorProfileScreen: { mentorId: string };
 };
 
 export type CourseStackParamList = {
@@ -45,9 +47,13 @@ export type CourseStackParamList = {
   TechnologiesScreen: { domainId?: string };
   CourseScreen: { technologySlug: string };
   LessonScreen: { courseId: string; lessonId: string };
-  LectureScreen: { lessonId: string; lectureId: string };
+  LectureScreen: { courseId: string; lessonId: string; lectureId: string };
   VideoPlayerScreen: { videoUrl: string; title?: string };
   OfflineCoursesScreen: undefined;
+  ProjectsScreen: { courseId?: string };
+  ProjectDetailScreen: { projectId: string };
+  ProjectSubmissionScreen: { projectId: string };
+  ProjectReviewScreen: { projectId: string; submissionId: string };
 };
 
 export type ExerciseStackParamList = {

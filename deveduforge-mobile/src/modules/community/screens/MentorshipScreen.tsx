@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { ScrollView, View, Text, TextInput, Pressable, StyleSheet } from 'react-native';
+import { ScrollView, View, Text, TextInput, Pressable, StyleSheet, Alert } from 'react-native';
 import { Search, GraduationCap, Star } from 'lucide-react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
 import { Card } from '../../../shared/components/ui/Card';
 import { Button } from '../../../shared/components/ui/Button';
@@ -11,6 +13,9 @@ import { spacing } from '../../../shared/constants/spacing';
 import { radius } from '../../../shared/constants/radius';
 import { shadows } from '../../../shared/constants/shadows';
 import { useMentors } from '../services/communityService';
+import type { CommunityStackParamList } from '../../../core/navigation/navigation.types';
+
+type NavProp = NativeStackNavigationProp<CommunityStackParamList, 'MentorshipScreen'>;
 
 const DOMAINS = ['Tous', 'Frontend', 'Backend', 'Mobile', 'DevOps', 'Data Science', 'UI/UX'];
 
@@ -22,13 +27,14 @@ const PRICE_RANGES = [
 ];
 
 export default function MentorshipScreen() {
+  const navigation = useNavigation<NavProp>();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeDomain, setActiveDomain] = useState('Tous');
   const [activePriceIndex, setActivePriceIndex] = useState(0);
   const { data: mentors = [] } = useMentors();
 
-  const handleBook = (_mentorId: string) => {
-    // Navigate to booking
+  const handleBook = (mentorId: string) => {
+    navigation.navigate('MentorProfileScreen', { mentorId });
   };
 
   const filteredMentors = mentors.filter((mentor) => {
@@ -117,7 +123,7 @@ export default function MentorshipScreen() {
             <MentorCard
               key={mentor.id}
               mentor={mentor}
-              onPress={() => {}}
+              onPress={() => navigation.navigate('MentorProfileScreen', { mentorId: mentor.id })}
               onBook={handleBook}
             />
           ))}
@@ -150,7 +156,7 @@ export default function MentorshipScreen() {
               <Text style={styles.ctaStatLabel}>Sessions/mois</Text>
             </View>
           </View>
-          <Button variant="secondary" fullWidth onPress={() => {}}>
+          <Button variant="secondary" fullWidth onPress={() => Alert.alert('Devenir mentor', 'Le programme de mentorat ouvrira bientôt les candidatures.')}>
             Postuler comme mentor
           </Button>
         </Card>
