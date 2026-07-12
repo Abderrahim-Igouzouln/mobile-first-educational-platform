@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useCallback, useRef, useMemo, useEffect } from 'react';
 import {
   View,
   Text,
@@ -46,12 +46,19 @@ export const QuizScreen: React.FC = () => {
   const currentQuestion = questions[currentIndex];
   const isLastQuestion = currentIndex === questions.length - 1;
 
+  const questionRef = useRef(currentQuestion);
+  const selectedOptionRef = useRef(selectedOptionId);
+  questionRef.current = currentQuestion;
+  selectedOptionRef.current = selectedOptionId;
+
   const handleTimerExpire = useCallback(() => {
-    if (!selectedOptionId) {
+    const q = questionRef.current;
+    const opt = selectedOptionRef.current;
+    if (!opt) {
       setAnswers((prev) => [
         ...prev,
         {
-          questionId: currentQuestion.id,
+          questionId: q.id,
           selectedOptionId: undefined,
           status: 'unanswered' as AnswerStatus,
         },
@@ -63,16 +70,16 @@ export const QuizScreen: React.FC = () => {
     submitAnswerMutation.mutate(
       {
         exerciseId,
-        questionId: currentQuestion.id,
-        selectedOptionId,
+        questionId: q.id,
+        selectedOptionId: opt,
       },
       {
         onSuccess: (result) => {
           setAnswers((prev) => [
             ...prev,
             {
-              questionId: currentQuestion.id,
-              selectedOptionId,
+              questionId: q.id,
+              selectedOptionId: opt,
               status: result.isCorrect ? 'correct' as AnswerStatus : 'incorrect' as AnswerStatus,
             },
           ]);
@@ -84,10 +91,12 @@ export const QuizScreen: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const { formattedTime, secondsRemaining, isExpired } = useQuizTimer(
+  const { formattedTime, secondsRemaining, isExpired, start: startTimer } = useQuizTimer(
     data?.timeLimit ?? 600,
     handleTimerExpire,
   );
+
+  useEffect(() => { startTimer(); }, [startTimer]);
 
   const handleSelectOption = (optionId: string) => {
     if (showResult || isExpired) return;

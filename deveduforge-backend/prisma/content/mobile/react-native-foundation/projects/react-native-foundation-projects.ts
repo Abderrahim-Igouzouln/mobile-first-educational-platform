@@ -1,0 +1,13 @@
+const project = {
+  "title": "Application Météo",
+  "instructions": "# Application Météo — Weather App\n\n## Objectif\n\nCréer une application React Native avec Expo qui affiche la météo actuelle et les prévisions sur 5 jours.\n\n## Consignes\n\n### 1. Fonctionnalités obligatoires\n\n- **Météo actuelle** : afficher la température, la description, l'icône météo et le nom de la ville\n- **Prévisions 5 jours** : liste défilante avec températures min/max et icônes pour chaque jour\n- **Recherche de ville** : champ de texte pour chercher une ville et afficher sa météo\n- **Pull-to-refresh** : `RefreshControl` sur la ScrollView/FlatList pour recharger les données\n- **Géolocalisation** : au lancement, récupérer la position GPS et afficher la météo locale\n\n### 2. Composants obligatoires\n\n- **WeatherCard** : carte affichant la météo actuelle (température, description, icône, ville)\n- **ForecastList** : liste des prévisions sur 5 jours\n- **SearchBar** : champ de recherche de ville avec bouton\n- **LoadingIndicator** : indicateur de chargement animé\n- **ErrorMessage** : composant d'erreur avec bouton réessayer\n\n### 3. API et Services\n\n- Utiliser l'API OpenWeatherMap (clé API à fournir dans un fichier `.env`)\n- Créer un service `weatherService.ts` avec les appels API\n- Gérer les erreurs réseau et les erreurs API\n- Stocker la dernière ville recherchée dans AsyncStorage\n\n### 4. Navigation\n\n- **Stack Navigator** : écran principal (météo) → écran de détails\n- **Bottom Tab Navigator** : onglets Météo / Recherche / Paramètres\n\n### 5. Fonctionnalités bonus (optionnelles)\n\n- Thème sombre / clair (via Context)\n- Animation de transition entre les écrans\n- Graphique des températures sur 5 jours (avec react-native-chart-kit)\n- Sauvegarde de villes favorites\n\n## Contraintes techniques\n\n- **Expo SDK 51+** avec TypeScript\n- **React Navigation** pour la navigation\n- **FlatList** pour la liste des prévisions (pas ScrollView)\n- Composants fonctionnels uniquement\n- Aucune donnée en dur : tout vient de l'API\n\n## Rendu\n\nDéposer le code source sur GitHub et soumettre le lien du repository.",
+  "evaluationCriteria": [
+    "Fonctionnalités : toutes les fonctionnalités obligatoires sont présentes et fonctionnelles (météo actuelle, prévisions 5 jours, recherche, pull-to-refresh, géolocalisation)",
+    "Architecture : séparation des composants, service API isolé, navigation correctement configurée",
+    "Gestion d'état : état local géré proprement, gestion des erreurs, loading states",
+    "Qualité du code : nommage clair, TypeScript correct, pas de données en dur",
+    "UI/UX : design soigné, indicateurs de chargement, messages d'erreur explicites, responsive"
+  ]
+};
+
+export default project;

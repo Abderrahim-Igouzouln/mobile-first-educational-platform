@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, StyleSheet, Platform } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, Pressable, StyleSheet, Platform, Alert } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { VideoView, useVideoPlayer } from 'expo-video';
-import { X, Play, Pause, Maximize2, RotateCcw } from 'lucide-react-native';
+import { X, Play, Pause, RotateCcw } from 'lucide-react-native';
 import { colors } from '../../../shared/constants/colors';
 import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
@@ -22,15 +23,46 @@ export const VideoPlayerScreen: React.FC = () => {
   });
 
   const [currentTime, setCurrentTime] = useState(0);
-  const [lastPosition, setLastPosition] = useState(0);
+  const lastPositionRef = useRef(0);
+  const progressKey = `@video_progress_${videoUrl}`;
+
+  useEffect(() => {
+    AsyncStorage.getItem(progressKey).then((pos) => {
+      if (pos) {
+        const parsed = parseFloat(pos);
+        if (parsed > 0) {
+          player.currentTime = parsed;
+          setCurrentTime(parsed);
+        }
+      }
+    }).catch(() => {});
+  }, [progressKey, player]);
 
   useEffect(() => {
     const sub = player.addListener('timeUpdate', (e) => {
       setCurrentTime(e.currentTime);
-      if (e.currentTime > 0) setLastPosition(e.currentTime);
+      if (e.currentTime > 0) lastPositionRef.current = e.currentTime;
     });
     return () => sub.remove();
   }, [player]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (lastPositionRef.current > 0) {
+        AsyncStorage.setItem(progressKey, String(lastPositionRef.current)).catch(() => {});
+      }
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [progressKey]);
+
+  useEffect(() => {
+    return () => {
+      if (lastPositionRef.current > 0) {
+        AsyncStorage.setItem(progressKey, String(lastPositionRef.current)).catch(() => {});
+      }
+      player.pause();
+    };
+  }, [player, progressKey]);
 
   const duration = player.duration;
 
@@ -81,9 +113,7 @@ export const VideoPlayerScreen: React.FC = () => {
             <Text style={styles.titleText} numberOfLines={1}>
               {title || 'Vidéo'}
             </Text>
-            <Pressable style={styles.controlIconButton}>
-              <Maximize2 size={18} color="#FFFFFF" />
-            </Pressable>
+            <View style={styles.controlIconButton} />
           </View>
 
           <View style={styles.centerControls}>
@@ -124,8 +154,8 @@ export const VideoPlayerScreen: React.FC = () => {
           >
             <Play size={16} color={colors.brand.orange} />
             <Text style={styles.resumeText}>
-              {lastPosition > 0
-                ? `Reprendre à ${formatTime(lastPosition)}`
+              {lastPositionRef.current > 0
+                ? `Reprendre à ${formatTime(lastPositionRef.current)}`
                 : 'Lire la vidéo'}
             </Text>
           </Pressable>

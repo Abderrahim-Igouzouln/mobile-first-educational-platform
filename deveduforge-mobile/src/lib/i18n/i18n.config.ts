@@ -1,11 +1,14 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import { I18nManager, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import fr from './locales/fr';
 import ar from './locales/ar';
 import en from './locales/en';
 
 const LANGUAGE_KEY = '@deveduforge_language';
+
+const RTL_LOCALES = ['ar'];
 
 const resources = {
   fr,
@@ -39,7 +42,14 @@ export const changeLanguage = async (lang: string) => {
   try {
     await AsyncStorage.setItem(LANGUAGE_KEY, lang);
   } catch {
-    // silently fail
+  }
+
+  if (Platform.OS !== 'web') {
+    const isRTL = RTL_LOCALES.includes(lang);
+    if (I18nManager.isRTL !== isRTL) {
+      I18nManager.allowRTL(isRTL);
+      I18nManager.forceRTL(isRTL);
+    }
   }
 };
 
