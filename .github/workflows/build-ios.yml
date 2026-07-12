@@ -1,0 +1,44 @@
+name: Build Unsigned iOS IPA
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Expo Prebuild
+        run: npx expo prebuild --platform ios
+
+      - name: Install CocoaPods
+        run: cd ios && pod install
+
+      - name: Build Unsigned App
+        run: |
+          xcodebuild -workspace ios/deveduforge.xcworkspace \
+            -scheme deveduforge \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath ios/build \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Package into IPA
+        run: |
+          mkdir Payload
+          mv ios/build/Build/Products/Release-iphoneos/*.app Payload/
+          zip -r deveduforge.ipa Payload
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deveduforge-ios-ipa
+          path: deveduforge.ipa
