@@ -47,7 +47,11 @@ export const handleResponseError = async (
   if (isRefreshing) {
     return new Promise((resolve, reject) => {
       failedQueue.push({ resolve, reject });
-    }).then((token) => {
+    }).then(async (token) => {
+      const tokens = await getTokens();
+      if (!tokens) {
+        return Promise.reject(new Error('Session terminated during refresh'));
+      }
       if (originalRequest.headers) {
         originalRequest.headers.Authorization = `Bearer ${token}`;
       }

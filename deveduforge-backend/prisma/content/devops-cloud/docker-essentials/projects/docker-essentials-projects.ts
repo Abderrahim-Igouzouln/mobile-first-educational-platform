@@ -1,0 +1,13 @@
+const project = {
+  "title": "Stack Web Complète avec Docker Compose",
+  "instructions": "# Stack Web Complète avec Docker Compose\n\n## Objectif\n\nCréer une stack web complète contenant une API, une base de données et un reverse proxy, le tout orchestré avec Docker Compose.\n\n## Consignes\n\n### 1. API Node.js/Express\n\n- Créer une API Express simple avec TypeScript\n- Route GET /health qui retourne `{ status: \"ok\", timestamp: \"...\" }`\n- Route GET /users qui retourne une liste d'utilisateurs depuis la base de données\n- Route POST /users qui crée un utilisateur (nom, email)\n- Connexion à PostgreSQL via le client `pg`\n- Dockerfile multi-stage : une étape de build (compilation TypeScript) et une étape de production (exécution du code compilé)\n\n### 2. Base de données PostgreSQL\n\n- Service PostgreSQL 16 Alpine\n- Volume nommé pour la persistance des données\n- Fichier d'initialisation SQL (init.sql) qui crée la table users\n- Healthcheck pour vérifier que PostgreSQL est prêt\n- Variables d'environnement pour l'utilisateur, le mot de passe et la base\n\n### 3. Nginx Reverse Proxy\n\n- Service Nginx qui redirige les requêtes vers l'API\n- Fichier de configuration nginx.conf personnalisé\n- Proxy pass vers le service API sur le port 3000\n- Les requêtes /api/* sont routées vers Express\n- Le port 80 est exposé pour l'accès externe\n\n### 4. Docker Compose Orchestration\n\n- Fichier docker-compose.yml avec les 3 services (api, postgres, nginx)\n- Réseau dédié pour la communication inter-services\n- Variables d'environnement dans un fichier .env\n- Commande docker compose up --build pour tout lancer\n- docker compose down -v doit tout arrêter proprement\n\n### 5. Documentation\n\n- README.md expliquant comment lancer le projet\n- Variables d'environnement documentées\n\n## Contraintes techniques\n\n- L'API doit être écrit en TypeScript\n- Le Dockerfile de l'API doit utiliser un multi-stage build\n- Le conteneur API doit tourner avec un utilisateur non-root\n- Aucun mot de passe en dur dans docker-compose.yml (utiliser .env)\n\n## Rendu\n\nDéposer le code source sur GitHub et soumettre le lien du repository.",
+  "evaluationCriteria": [
+    "Multi-stage build fonctionnel (étape de build TypeScript séparée de l'image de production)",
+    "Orchestration Compose correcte (3 services communiquent via les noms de service, healthcheck sur PostgreSQL)",
+    "Persistance des données (volume nommé PostgreSQL, init.sql correctement monté)",
+    "Nginx reverse proxy (proxy pass fonctionnel vers l'API, configuration correcte)",
+    "Sécurité et bonnes pratiques (utilisateur non-root, .env pour les secrets, .dockerignore)"
+  ]
+};
+
+export default project;

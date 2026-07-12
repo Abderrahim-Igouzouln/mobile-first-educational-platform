@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet, Platform } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, Platform } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ArrowLeft } from 'lucide-react-native';
@@ -53,13 +53,9 @@ export const LessonScreen: React.FC = () => {
       >
         <View style={styles.topBar}>
           <View style={styles.topBarLeft}>
-            <View style={styles.backCircle}>
-              <ArrowLeft
-                size={20}
-                color={colors.neutral.text}
-                onPress={() => navigation.goBack()}
-              />
-            </View>
+            <Pressable style={styles.backCircle} onPress={() => navigation.goBack()} role="button" accessibilityLabel="Retour">
+              <ArrowLeft size={20} color={colors.neutral.text} />
+            </Pressable>
             <Text style={styles.courseLabel} numberOfLines={1}>
               {courseData?.title ?? 'Cours'}
             </Text>
