@@ -1,5 +1,5 @@
 name: Build Unsigned iOS IPA
-on:
+on: 
   workflow_dispatch:
   push:
     branches:
@@ -21,6 +21,7 @@ jobs:
         run: |
           cd deveduforge-mobile
           npm install --legacy-peer-deps
+          npm install react-native-worklets --legacy-peer-deps
 
       - name: Expo Prebuild
         run: |
@@ -41,14 +42,14 @@ jobs:
             -sdk iphoneos \
             -derivedDataPath ios/build \
             CODE_SIGNING_ALLOWED=NO
-
+            
       - name: Package into IPA
         run: |
           cd deveduforge-mobile
           mkdir Payload
           mv ios/build/Build/Products/Release-iphoneos/*.app Payload/
           zip -r deveduforge.ipa Payload
-
+          
       - name: Upload IPA Artifact
         uses: actions/upload-artifact@v4
         with:
