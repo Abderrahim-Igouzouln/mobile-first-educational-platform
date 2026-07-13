@@ -1,5 +1,5 @@
 import { Strategy as JwtStrategy, ExtractJwt, StrategyOptionsWithRequest } from 'passport-jwt';
-import { jwtConfig } from '../../../config/jwt';
+import { jwtConfig } from '../../../config/security/jwt';
 import { Request } from 'express';
 
 const opts: StrategyOptionsWithRequest = {

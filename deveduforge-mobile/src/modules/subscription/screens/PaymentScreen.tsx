@@ -9,15 +9,15 @@ import {
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { Lock, CheckCircle, ExternalLink, RefreshCw } from 'lucide-react-native';
+import { Lock, CheckCircle, ExternalLink, RefreshCw, CreditCard } from 'lucide-react-native';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { Card } from '../../../shared/components/ui/Card';
-import { Button } from '../../../shared/components/ui/Button';
+import { Card } from '../../../shared/components/ui/display/Card';
+import { Button } from '../../../shared/components/ui/input/Button';
 import { colors } from '../../../shared/constants/colors';
 import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
 import { radius } from '../../../shared/constants/radius';
-import { useCreateCheckoutSession, useMySubscription } from '../services/subscriptionService';
+import { useCreateCheckoutSession, useMySubscription, useCreateCertificateCheckoutSession } from '../services/subscriptionService';
 import type { ProfileStackParamList } from '../../../core/navigation/navigation.types';
 
 type NavigationProp = NativeStackNavigationProp<ProfileStackParamList>;
@@ -28,22 +28,28 @@ type PaymentStatus = 'idle' | 'loading' | 'redirected' | 'success' | 'failure';
 export default function PaymentScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<ScreenRouteProp>();
-  const { planId, planName, price } = route.params;
+  const { type = 'subscription', planId = '', planName = '', price = 0, certificateId = '', amountMad = 0, technologyName = '' } = route.params;
 
   const createCheckoutSession = useCreateCheckoutSession();
+  const createCertificateCheckoutSession = useCreateCertificateCheckoutSession();
   const { data: subscription, refetch: refetchSubscription } = useMySubscription();
+
+  const displayName = type === 'certificate' ? `Certificat ${technologyName}` : planName;
+  const displayPrice = type === 'certificate' ? amountMad : price;
 
   const [status, setStatus] = useState<PaymentStatus>('idle');
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (subscription?.status === 'active') {
-      setStatus('success');
-    } else if (subscription?.status === 'pending') {
-      setStatus('redirected');
+    if (type === 'subscription') {
+      if (subscription?.status === 'active') {
+        setStatus('success');
+      } else if (subscription?.status === 'pending') {
+        setStatus('redirected');
+      }
     }
-  }, [subscription]);
+  }, [subscription, type]);
 
   const handlePay = useCallback(async () => {
     setLoading(true);
@@ -54,20 +60,32 @@ export default function PaymentScreen() {
       const successUrl = `${apiBaseUrl}/payment/success`;
       const cancelUrl = `${apiBaseUrl}/payment/cancel`;
 
-      const result = await createCheckoutSession.mutateAsync({
-        planCode: planId,
-        successUrl,
-        cancelUrl,
-      });
+      let result: { url: string | null; sessionId: string | null };
+
+      if (type === 'certificate') {
+        result = await createCertificateCheckoutSession.mutateAsync({
+          certificateId,
+          successUrl,
+          cancelUrl,
+        });
+      } else {
+        result = await createCheckoutSession.mutateAsync({
+          planCode: planId,
+          successUrl,
+          cancelUrl,
+        });
+      }
 
       setLoading(false);
 
       if (!result.url) {
-        navigation.replace('PaymentSuccessScreen', {
-          planName,
-          startDate: new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' }),
-          nextBilling: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' }),
-        });
+        if (type === 'subscription') {
+          navigation.replace('PaymentSuccessScreen', {
+            planName,
+            startDate: new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' }),
+            nextBilling: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' }),
+          });
+        }
         return;
       }
 
@@ -83,9 +101,10 @@ export default function PaymentScreen() {
       setLoading(false);
       setStatus('failure');
     }
-  }, [planId, planName, navigation, createCheckoutSession]);
+  }, [type, planId, planName, certificateId, navigation, createCheckoutSession, createCertificateCheckoutSession]);
 
   const checkStatus = useCallback(async () => {
+    if (type !== 'subscription') return;
     setLoading(true);
     try {
       const { data: sub } = await refetchSubscription();
@@ -106,7 +125,7 @@ export default function PaymentScreen() {
       setLoading(false);
       setStatus('redirected');
     }
-  }, [refetchSubscription, navigation, planName]);
+  }, [refetchSubscription, navigation, planName, type]);
 
   const handleRetry = useCallback(() => {
     setStatus('idle');
@@ -127,15 +146,15 @@ export default function PaymentScreen() {
         <Card style={styles.orderSummary}>
           <Text style={styles.summaryTitle}>Récapitulatif</Text>
           <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>{planName}</Text>
-            <Text style={styles.summaryValue}>{price} MAD</Text>
+            <Text style={styles.summaryLabel}>{displayName}</Text>
+            <Text style={styles.summaryValue}>{displayPrice} MAD</Text>
           </View>
           <View style={styles.divider} />
           <View style={styles.summaryRow}>
             <Text style={styles.totalLabel}>Total</Text>
-            <Text style={styles.totalValue}>{price} MAD</Text>
+            <Text style={styles.totalValue}>{displayPrice} MAD</Text>
           </View>
-          <Text style={styles.renewalNote}>Renouvellement mensuel automatique</Text>
+          {type === 'subscription' && <Text style={styles.renewalNote}>Renouvellement mensuel automatique</Text>}
         </Card>
 
         <View style={styles.paySection}>
@@ -184,7 +203,7 @@ export default function PaymentScreen() {
                 loading={loading}
                 onPress={handlePay}
               >
-                Payer {price} MAD via Stripe
+                Payer {displayPrice} MAD via Stripe
               </Button>
               {status === 'failure' && (
                 <Button

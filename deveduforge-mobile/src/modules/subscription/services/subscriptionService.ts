@@ -83,6 +83,12 @@ export const useCreateCheckoutSession = () =>
       paymentEndpoints.createCheckoutSession(data),
   });
 
+export const useCreateCertificateCheckoutSession = () =>
+  useMutation({
+    mutationFn: (data: { certificateId: string; successUrl: string; cancelUrl: string }) =>
+      paymentEndpoints.createCertificateCheckoutSession(data),
+  });
+
 export const useGetPayments = () =>
   useQuery({
     queryKey: [...queryKeys.user.all, 'payments'],

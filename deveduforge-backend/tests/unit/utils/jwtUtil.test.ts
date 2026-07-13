@@ -1,5 +1,5 @@
-import { signAccessToken, signRefreshToken, verifyAccessToken, verifyRefreshToken } from '../../../src/utils/jwt.util';
-import { jwtConfig } from '../../../src/config/jwt';
+import { signAccessToken, signRefreshToken, verifyAccessToken, verifyRefreshToken } from '../../../src/utils/security/jwt.util';
+import { jwtConfig } from '../../../src/config/security/jwt';
 
 describe('JWT Utility', () => {
   const accessPayload = { sub: 'user-123', role: 'student' as const, email: 'test@test.com', locale: 'fr', emailVerifiedAt: new Date().toISOString() };

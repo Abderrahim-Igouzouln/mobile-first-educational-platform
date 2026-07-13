@@ -4,7 +4,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { Shield, XCircle, CreditCard, Zap, Clock, ArrowRight } from 'lucide-react-native';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { LoadingSpinner } from '../../../shared/components/ui/LoadingSpinner';
+import { LoadingSpinner } from '../../../shared/components/ui/feedback/LoadingSpinner';
 import { FeatureComparisonTable } from '../components/FeatureComparisonTable';
 import { PlanCard } from '../components/PlanCard';
 import { colors } from '../../../shared/constants/colors';

@@ -1,4 +1,4 @@
-import { prisma } from '../../config/database';
+import { prisma } from '../../config/database/prisma';
 
 export class AuditService {
   async log(actorId: string | undefined, action: string, targetType: string, targetId?: string, metadata?: any, ipAddress?: string) {

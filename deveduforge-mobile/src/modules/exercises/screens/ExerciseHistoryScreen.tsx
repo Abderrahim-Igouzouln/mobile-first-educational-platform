@@ -11,7 +11,7 @@ import { spacing } from '../../../shared/constants/spacing';
 import { radius } from '../../../shared/constants/radius';
 import { shadows } from '../../../shared/constants/shadows';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { EmptyState } from '../../../shared/components/ui/EmptyState';
+import { EmptyState } from '../../../shared/components/ui/display/EmptyState';
 
 type NavProp = NativeStackNavigationProp<ExerciseStackParamList, 'ExerciseHistoryScreen'>;
 type ScreenRoute = RouteProp<ExerciseStackParamList, 'ExerciseHistoryScreen'>;

@@ -7,7 +7,7 @@ import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
 import { radius } from '../../../shared/constants/radius';
 import { shadows } from '../../../shared/constants/shadows';
-import { Card } from '../../../shared/components/ui/Card';
+import { Card } from '../../../shared/components/ui/display/Card';
 
 interface ExerciseCardProps {
   exercise: Exercise;

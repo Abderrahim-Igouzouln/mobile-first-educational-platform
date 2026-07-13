@@ -11,7 +11,7 @@ jest.mock('../../../src/modules/exercise/exercise.repository', () => ({
 }));
 
 import { ExerciseService } from '../../../src/modules/exercise/exercise.service';
-import { NotFoundError } from '../../../src/utils/errors.util';
+import { NotFoundError } from '../../../src/utils/response/errors.util';
 
 describe('ExerciseService', () => {
   let service: ExerciseService;
@@ -20,6 +20,7 @@ describe('ExerciseService', () => {
     id: 'ex1',
     title: 'Quiz React',
     passingScorePercent: 70,
+    lesson: { id: 'lesson-1', courseId: 'course-1' },
     questions: [
       {
         id: 'q1',

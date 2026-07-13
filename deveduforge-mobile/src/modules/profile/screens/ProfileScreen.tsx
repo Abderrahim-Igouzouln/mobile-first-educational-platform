@@ -18,12 +18,14 @@ import {
   Trash2,
   ChevronRight,
   GraduationCap,
+  Trophy,
+  Bookmark,
 } from 'lucide-react-native';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { Card } from '../../../shared/components/ui/Card';
-import { Modal } from '../../../shared/components/ui/Modal';
-import { Button } from '../../../shared/components/ui/Button';
-import { LoadingSpinner } from '../../../shared/components/ui/LoadingSpinner';
+import { Card } from '../../../shared/components/ui/display/Card';
+import { Modal } from '../../../shared/components/ui/display/Modal';
+import { Button } from '../../../shared/components/ui/input/Button';
+import { LoadingSpinner } from '../../../shared/components/ui/feedback/LoadingSpinner';
 import { colors } from '../../../shared/constants/colors';
 import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
@@ -110,6 +112,18 @@ export default function ProfileScreen() {
           />
           <View style={styles.separator} />
           <MenuItem
+            icon={Trophy}
+            label="Succès"
+            onPress={() => navigation.navigate('AchievementsScreen')}
+          />
+          <View style={styles.separator} />
+          <MenuItem
+            icon={Bookmark}
+            label="Cours sauvegardés"
+            onPress={() => navigation.navigate('SavedCoursesScreen')}
+          />
+          <View style={styles.separator} />
+          <MenuItem
             icon={Crown}
             label="Abonnement"
             onPress={() => navigation.navigate('SubscriptionScreen')}
@@ -179,7 +193,7 @@ export default function ProfileScreen() {
           <MenuItem
             icon={HelpCircle}
             label="Centre d'Aide"
-            onPress={handleHelpPress}
+            onPress={() => navigation.navigate('HelpScreen')}
           />
           <View style={styles.separator} />
           <MenuItem

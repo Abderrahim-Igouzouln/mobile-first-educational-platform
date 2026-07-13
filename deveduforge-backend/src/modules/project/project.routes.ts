@@ -53,8 +53,8 @@
 import { Router } from 'express';
 import * as projectController from './project.controller';
 import { extractUser } from '../auth/auth.middleware';
-import { roleMiddleware } from '../../middleware/role.middleware';
-import { validationMiddleware } from '../../middleware/validation.middleware';
+import { roleMiddleware } from '../../middleware/auth/role.middleware';
+import { validationMiddleware } from '../../middleware/validation/validation.middleware';
 import { submitProjectSchema, reviewSubmissionSchema, addCommentSchema } from './project.validation';
 import { Role } from '../../constants/roles';
 

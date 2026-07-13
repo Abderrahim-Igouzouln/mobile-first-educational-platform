@@ -1,4 +1,4 @@
-import { prisma } from '../../config/database';
+import { prisma } from '../../config/database/prisma';
 
 export class AnalyticsRepository {
   async trackEvent(userId: string | undefined, event: string, properties: unknown) {

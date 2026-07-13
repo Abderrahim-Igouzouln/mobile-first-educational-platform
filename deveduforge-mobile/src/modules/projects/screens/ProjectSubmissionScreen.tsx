@@ -17,8 +17,8 @@ import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
 import { radius } from '../../../shared/constants/radius';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { Button } from '../../../shared/components/ui/Button';
-import { Input } from '../../../shared/components/ui/Input';
+import { Button } from '../../../shared/components/ui/input/Button';
+import { Input } from '../../../shared/components/ui/input/Input';
 import type { CourseStackParamList } from '../../../core/navigation/navigation.types';
 import { useProjectSubmission } from '../services/projectService';
 

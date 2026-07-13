@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, View, Text, Pressable, StyleSheet } from 'react-native';
-import { Plus, Users, MessageSquare, Circle, TrendingUp } from 'lucide-react-native';
+import { Plus, Users, MessageSquare, Circle, TrendingUp, Trophy } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ChevronRight } from 'lucide-react-native';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
 import { DiscussionCard } from '../components/DiscussionCard';
 import { StudyGroupCard } from '../components/StudyGroupCard';
@@ -71,6 +72,15 @@ export default function CommunityScreen() {
             <Text style={styles.statLabel}>En ligne</Text>
           </View>
         </View>
+
+        <Pressable style={styles.leaderboardCard} onPress={() => navigation.navigate('LeaderboardScreen')}>
+          <Trophy size={22} color={colors.semantic.warning} />
+          <View style={styles.leaderboardInfo}>
+            <Text style={styles.leaderboardTitle}>Classement</Text>
+            <Text style={styles.leaderboardSub}>Voir le top des apprenants</Text>
+          </View>
+          <ChevronRight size={18} color={colors.neutral.textMuted} />
+        </Pressable>
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -157,6 +167,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     gap: spacing.md,
     marginBottom: spacing.xxl,
+  },
+  leaderboardCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.neutral.surface,
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.lg,
+    padding: spacing.lg,
+    borderRadius: radius.lg,
+    ...shadows.sm,
+  },
+  leaderboardInfo: {
+    flex: 1,
+    marginLeft: spacing.md,
+  },
+  leaderboardTitle: {
+    ...typography.h3,
+    color: colors.neutral.text,
+  },
+  leaderboardSub: {
+    ...typography.bodySmall,
+    color: colors.neutral.textLight,
   },
   statCard: {
     flex: 1,

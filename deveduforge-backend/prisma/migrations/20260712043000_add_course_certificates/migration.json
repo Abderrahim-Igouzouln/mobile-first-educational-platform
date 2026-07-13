@@ -1,0 +1,96 @@
+{
+  "version": "5.14.0",
+  "steps": [
+    {
+      "tag": "CreateEnum",
+      "enum": "PaymentType",
+      "values": ["subscription", "certificate"]
+    },
+    {
+      "tag": "CreateEnum",
+      "enum": "CertificateStatus",
+      "values": ["locked", "unlocked", "paid"]
+    },
+    {
+      "tag": "AlterTable",
+      "table": "Certificate",
+      "addColumns": [
+        {
+          "name": "courseId",
+          "type": "UUID",
+          "isRequired": true
+        },
+        {
+          "name": "status",
+          "type": "CertificateStatus",
+          "isRequired": true,
+          "default": "locked"
+        },
+        {
+          "name": "priceMad",
+          "type": "Decimal(10,2)",
+          "isRequired": true,
+          "default": 29.00
+        },
+        {
+          "name": "unlockedAt",
+          "type": "Timestamp",
+          "isRequired": false
+        },
+        {
+          "name": "paidAt",
+          "type": "Timestamp",
+          "isRequired": false
+        },
+        {
+          "name": "paymentId",
+          "type": "UUID",
+          "isRequired": false,
+          "isUnique": true
+        }
+      ]
+    },
+    {
+      "tag": "AlterTable",
+      "table": "Payment",
+      "addColumns": [
+        {
+          "name": "type",
+          "type": "PaymentType",
+          "isRequired": true,
+          "default": "subscription"
+        }
+      ]
+    },
+    {
+      "tag": "CreateIndex",
+      "unique": true,
+      "fields": ["userId", "courseId"],
+      "table": "Certificate"
+    },
+    {
+      "tag": "AddForeignKey",
+      "constraintName": "Certificate_courseId_fkey",
+      "table": "Certificate",
+      "column": "courseId",
+      "references": {
+        "table": "Course",
+        "column": "id"
+      },
+      "onDelete": "RESTRICT",
+      "onUpdate": "CASCADE"
+    },
+    {
+      "tag": "AddForeignKey",
+      "constraintName": "Certificate_paymentId_fkey",
+      "table": "Certificate",
+      "column": "paymentId",
+      "references": {
+        "table": "Payment",
+        "column": "id"
+      },
+      "onDelete": "SET_NULL",
+      "onUpdate": "CASCADE"
+    }
+  ]
+}

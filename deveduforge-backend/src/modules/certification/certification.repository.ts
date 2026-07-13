@@ -1,12 +1,26 @@
-import { prisma } from '../../config/database';
+import { prisma } from '../../config/database/prisma';
 
 export class CertificationRepository {
   async findCertificatesByUser(userId: string) {
-    return prisma.certificate.findMany({ where: { userId, isRevoked: false }, include: { technology: { select: { name: true } } }, orderBy: { issuedAt: 'desc' } });
+    return prisma.certificate.findMany({
+      where: { userId, isRevoked: false },
+      include: {
+        technology: { select: { name: true, slug: true } },
+        user: { select: { firstName: true, lastName: true } },
+        course: { select: { title: true } },
+      },
+      orderBy: { issuedAt: 'desc' },
+    });
   }
 
   async findCertificateByNumber(number: string) {
-    return prisma.certificate.findUnique({ where: { certificateNumber: number }, include: { user: { select: { firstName: true, lastName: true } }, technology: { select: { name: true } } } });
+    return prisma.certificate.findUnique({
+      where: { certificateNumber: number },
+      include: {
+        user: { select: { firstName: true, lastName: true } },
+        technology: { select: { name: true } },
+      },
+    });
   }
 
   async findCertificateById(id: string) {
@@ -15,6 +29,10 @@ export class CertificationRepository {
 
   async createCertificate(data: any) {
     return prisma.certificate.create({ data });
+  }
+
+  async updateCertificate(id: string, data: any) {
+    return prisma.certificate.update({ where: { id }, data });
   }
 
   async revokeCertificate(id: string, reason: string) {

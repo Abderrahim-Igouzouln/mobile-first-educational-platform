@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { NotificationService } from './notification.service';
-import { sendSuccess, sendNoContent } from '../../utils/apiResponse.util';
+import { sendSuccess, sendNoContent } from '../../utils/response/apiResponse.util';
 
 const notificationService = new NotificationService();
 

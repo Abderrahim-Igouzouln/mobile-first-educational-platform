@@ -11,7 +11,7 @@
 import { Router } from 'express';
 import * as auditController from './audit.controller';
 import { extractUser } from '../auth/auth.middleware';
-import { roleMiddleware } from '../../middleware/role.middleware';
+import { roleMiddleware } from '../../middleware/auth/role.middleware';
 import { Role } from '../../constants/roles';
 
 const router = Router();

@@ -40,6 +40,7 @@ export type CommunityStackParamList = {
   StudyGroupsScreen: undefined;
   StudyGroupDetailScreen: { groupId: string };
   MentorProfileScreen: { mentorId: string };
+  LeaderboardScreen: undefined;
 };
 
 export type CourseStackParamList = {
@@ -54,6 +55,8 @@ export type CourseStackParamList = {
   ProjectDetailScreen: { projectId: string };
   ProjectSubmissionScreen: { projectId: string };
   ProjectReviewScreen: { projectId: string; submissionId: string };
+  CourseReviewsScreen: { courseId: string };
+  CourseCompleteScreen: { courseId: string; technologySlug?: string };
 };
 
 export type ExerciseStackParamList = {
@@ -79,11 +82,15 @@ export type ProfileStackParamList = {
   InstructorDashboardScreen: undefined;
   NotificationCenterScreen: undefined;
   SubscriptionScreen: undefined;
-  PaymentScreen: { planId: string; planName: string; price: number };
+  PaymentScreen: { type?: 'subscription' | 'certificate'; planId?: string; planName?: string; price?: number; certificateId?: string; amountMad?: number; technologyName?: string };
   PaymentSuccessScreen: { planName: string; startDate: string; nextBilling: string };
   LanguageScreen: undefined;
   SecurityScreen: undefined;
   NotificationSettingsScreen: undefined;
   DataSettingsScreen: undefined;
   AboutScreen: undefined;
+  AchievementsScreen: undefined;
+  SavedCoursesScreen: undefined;
+  HelpScreen: undefined;
+  LegalScreen: undefined;
 };

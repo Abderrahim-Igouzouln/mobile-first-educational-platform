@@ -6,7 +6,7 @@ import { colors } from '../../../shared/constants/colors';
 import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
 import { radius } from '../../../shared/constants/radius';
-import { Button } from '../../../shared/components/ui/Button';
+import { Button } from '../../../shared/components/ui/input/Button';
 
 interface ExamWarningModalProps {
   visible: boolean;

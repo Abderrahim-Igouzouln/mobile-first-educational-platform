@@ -1,9 +1,11 @@
-import { prisma } from '../../config/database';
+import { prisma } from '../../config/database/prisma';
 import { CourseRepository } from './course.repository';
-import { NotFoundError, ForbiddenError } from '../../utils/errors.util';
+import { NotFoundError, ForbiddenError } from '../../utils/response/errors.util';
 import { Role } from '../../constants/roles';
+import { CertificationService } from '../certification/certification.service';
 
 const repo = new CourseRepository();
+const certificationService = new CertificationService();
 
 export class CourseService {
   async getDomains() {
@@ -109,6 +111,8 @@ export class CourseService {
     await repo.updateStreak(userId);
 
     await prisma.userActivity.create({ data: { userId, type: 'lesson.completed', metadata: { lessonId, courseId: lesson.courseId } } }).catch(() => {});
+
+    await certificationService.checkAndUnlockCertificate(userId, lesson.courseId).catch(() => {});
 
     return { lessonId, status: 'completed' };
   }

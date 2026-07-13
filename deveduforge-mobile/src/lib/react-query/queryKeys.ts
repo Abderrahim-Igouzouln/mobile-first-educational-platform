@@ -41,5 +41,18 @@ export const queryKeys = {
   },
   community: {
     all: ['community'] as const,
+    leaderboard: (period?: string) =>
+      [...queryKeys.community.all, 'leaderboard', period] as const,
+  },
+  progress: {
+    all: ['progress'] as const,
+    dashboard: () => [...queryKeys.progress.all, 'dashboard'] as const,
+    achievements: () => [...queryKeys.progress.all, 'achievements'] as const,
+    streak: () => [...queryKeys.progress.all, 'streak'] as const,
+    activityCalendar: () => [...queryKeys.progress.all, 'activity-calendar'] as const,
+    timeSeries: (days?: number) =>
+      [...queryKeys.progress.all, 'time-series', days] as const,
+    domainBreakdown: () => [...queryKeys.progress.all, 'domain-breakdown'] as const,
+    platformComparison: () => [...queryKeys.progress.all, 'platform-comparison'] as const,
   },
 };

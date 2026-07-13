@@ -67,7 +67,7 @@
 import { Router } from 'express';
 import * as communityController from './community.controller';
 import { extractUser } from '../auth/auth.middleware';
-import { validationMiddleware } from '../../middleware/validation.middleware';
+import { validationMiddleware } from '../../middleware/validation/validation.middleware';
 import { createPostSchema, addCommentSchema } from './community.validation';
 
 const router = Router();

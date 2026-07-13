@@ -8,6 +8,8 @@ import { LessonScreen } from '../../modules/courses/screens/LessonScreen';
 import { LectureScreen } from '../../modules/courses/screens/LectureScreen';
 import { VideoPlayerScreen } from '../../modules/courses/screens/VideoPlayerScreen';
 import { OfflineCoursesScreen } from '../../modules/courses/screens/OfflineCoursesScreen';
+import { CourseReviewsScreen } from '../../modules/courses/screens/CourseReviewsScreen';
+import { CourseCompleteScreen } from '../../modules/courses/screens/CourseCompleteScreen';
 import { ProjectsScreen } from '../../modules/projects/screens/ProjectsScreen';
 import { ProjectDetailScreen } from '../../modules/projects/screens/ProjectDetailScreen';
 import { ProjectSubmissionScreen } from '../../modules/projects/screens/ProjectSubmissionScreen';
@@ -30,6 +32,8 @@ const screens: {
   { name: 'ProjectDetailScreen', component: ProjectDetailScreen },
   { name: 'ProjectSubmissionScreen', component: ProjectSubmissionScreen },
   { name: 'ProjectReviewScreen', component: ProjectReviewScreen },
+  { name: 'CourseReviewsScreen', component: CourseReviewsScreen },
+  { name: 'CourseCompleteScreen', component: CourseCompleteScreen },
 ];
 
 export default function CourseNavigator() {

@@ -14,7 +14,7 @@ jest.mock('../../../src/modules/project/project.repository', () => ({
 }));
 
 import { ProjectService } from '../../../src/modules/project/project.service';
-import { NotFoundError } from '../../../src/utils/errors.util';
+import { NotFoundError } from '../../../src/utils/response/errors.util';
 
 describe('ProjectService', () => {
   let service: ProjectService;

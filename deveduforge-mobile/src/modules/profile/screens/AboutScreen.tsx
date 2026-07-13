@@ -1,14 +1,18 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet, Linking } from 'react-native';
-import { ExternalLink } from 'lucide-react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { ProfileStackParamList } from '../../../core/navigation/navigation.types';
+import { ExternalLink, ChevronRight } from 'lucide-react-native';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { Card } from '../../../shared/components/ui/Card';
+import { Card } from '../../../shared/components/ui/display/Card';
 import { colors } from '../../../shared/constants/colors';
 import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
 import Constants from 'expo-constants';
 
 export default function AboutScreen() {
+  const navigation = useNavigation<NativeStackNavigationProp<ProfileStackParamList>>();
   const appVersion = Constants.expoConfig?.version ?? '1.0.0';
   const buildNumber = Constants.platform?.ios?.buildNumber ?? Constants.platform?.android?.versionCode?.toString() ?? '1';
 
@@ -38,6 +42,14 @@ export default function AboutScreen() {
           >
             <Text style={styles.linkText}>Conditions d'utilisation</Text>
             <ExternalLink size={18} color={colors.neutral.textMuted} />
+          </Pressable>
+          <View style={styles.separator} />
+          <Pressable
+            style={styles.linkRow}
+            onPress={() => navigation.navigate('LegalScreen')}
+          >
+            <Text style={styles.linkText}>Mentions légales</Text>
+            <ChevronRight size={18} color={colors.neutral.textMuted} />
           </Pressable>
         </Card>
 
