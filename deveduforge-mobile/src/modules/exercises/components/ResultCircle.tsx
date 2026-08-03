@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, Animated, StyleSheet, TextStyle, StyleProp } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TextStyle, StyleProp } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import { colors } from '../../../shared/constants/colors';
 import { typography } from '../../../shared/constants/typography';
@@ -10,29 +10,35 @@ interface ResultCircleProps {
   strokeWidth?: number;
 }
 
+const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
 export const ResultCircle: React.FC<ResultCircleProps> = ({
   percentage,
   size = 160,
   strokeWidth = 12,
 }) => {
-  const animatedValue = useRef(new Animated.Value(0)).current;
+  const [animatedPercent, setAnimatedPercent] = useState(0);
   const half = size / 2;
   const radius = half - strokeWidth / 2;
   const circumference = 2 * Math.PI * radius;
 
   useEffect(() => {
-    Animated.timing(animatedValue, {
-      toValue: percentage,
-      duration: 1200,
-      useNativeDriver: false,
-    }).start();
-  }, [percentage, animatedValue]);
+    const startTime = Date.now();
+    const duration = 1200;
+    let frameId: number;
 
-  const strokeDashoffset = animatedValue.interpolate({
-    inputRange: [0, 100],
-    outputRange: [circumference, 0],
-    extrapolate: 'clamp',
-  });
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      setAnimatedPercent(easeOutCubic(progress) * percentage);
+      if (progress < 1) {
+        frameId = requestAnimationFrame(animate);
+      }
+    };
+
+    frameId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frameId);
+  }, [percentage]);
 
   const getColor = () => {
     if (percentage >= 80) return colors.semantic.success;
@@ -41,6 +47,7 @@ export const ResultCircle: React.FC<ResultCircleProps> = ({
   };
 
   const progressColor = getColor();
+  const strokeDashoffset = circumference - (animatedPercent / 100) * circumference;
 
   return (
     <View style={[styles.container, { width: size, height: size }]}>
@@ -53,7 +60,7 @@ export const ResultCircle: React.FC<ResultCircleProps> = ({
           strokeWidth={strokeWidth}
           fill="none"
         />
-        <AnimatedCircle
+        <Circle
           cx={half}
           cy={half}
           r={radius}
@@ -67,23 +74,13 @@ export const ResultCircle: React.FC<ResultCircleProps> = ({
         />
       </Svg>
       <View style={[styles.center, { width: size - strokeWidth * 2 - 8, height: size - strokeWidth * 2 - 8, borderRadius: (size - strokeWidth * 2 - 8) / 2 }]}>
-        <AnimatedText
-          style={[styles.percentage, { color: progressColor }]}
-        >
-          {Math.round(percentage)}%
-        </AnimatedText>
+        <Text style={[styles.percentage, { color: progressColor }]}>
+          {Math.round(animatedPercent)}%
+        </Text>
         <Text style={styles.label}>Score</Text>
       </View>
     </View>
   );
-};
-
-const AnimatedCircle = Animated.createAnimatedComponent(Circle);
-const AnimatedText: React.FC<{ style: StyleProp<TextStyle>; children: React.ReactNode }> = ({
-  style,
-  children,
-}) => {
-  return <Animated.Text style={style}>{children}</Animated.Text>;
 };
 
 const styles = StyleSheet.create({

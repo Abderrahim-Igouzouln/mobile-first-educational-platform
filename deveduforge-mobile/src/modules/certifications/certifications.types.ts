@@ -1,18 +1,19 @@
 export interface Certificate {
   id: string;
-  technologyId: string;
-  technologyName: string;
-  technologyIcon: string;
-  level: 'debutant' | 'intermediaire' | 'avance' | 'expert';
-  fullName: string;
-  issueDate: string;
   certificateNumber: string;
-  score: number;
-  totalQuestions: number;
-  pdfUrl?: string;
-  verificationUrl: string;
-  domainColor?: string;
-  domainName?: string;
+  technologyName: string;
+  technologySlug: string;
+  scorePercent: number;
+  issuedAt: string | null;
+  pdfUrl?: string | null;
+  status: 'locked' | 'unlocked' | 'paid';
+  priceMad: number;
+  unlockedAt?: string | null;
+  paidAt?: string | null;
+  fullName?: string;
+  verificationUrl?: string;
+  courseId?: string;
+  courseTitle?: string;
 }
 
 export interface CertificationAttempt {

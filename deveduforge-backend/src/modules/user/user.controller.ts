@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { UserService } from './user.service';
-import { sendSuccess, sendNoContent } from '../../utils/apiResponse.util';
+import { sendSuccess, sendNoContent } from '../../utils/response/apiResponse.util';
 
 const userService = new UserService();
 

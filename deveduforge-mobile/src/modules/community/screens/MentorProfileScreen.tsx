@@ -8,10 +8,10 @@ import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
 import { radius } from '../../../shared/constants/radius';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { Button } from '../../../shared/components/ui/Button';
-import { Card } from '../../../shared/components/ui/Card';
-import { Chip } from '../../../shared/components/ui/Chip';
-import { LoadingSpinner } from '../../../shared/components/ui/LoadingSpinner';
+import { Button } from '../../../shared/components/ui/input/Button';
+import { Card } from '../../../shared/components/ui/display/Card';
+import { Chip } from '../../../shared/components/ui/input/Chip';
+import { LoadingSpinner } from '../../../shared/components/ui/feedback/LoadingSpinner';
 import { useMentors, useRequestMentorship } from '../services/communityService';
 import type { CommunityStackParamList } from '../../../core/navigation/navigation.types';
 

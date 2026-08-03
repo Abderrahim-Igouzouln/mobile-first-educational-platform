@@ -1,5 +1,5 @@
 import QRCode from 'qrcode';
-import { signQrData } from '../../../utils/qrSignature.util';
+import { signQrData } from '../../../utils/security/qrSignature.util';
 
 export class QrCodeService {
   async generateQrCode(certificateNumber: string): Promise<string> {

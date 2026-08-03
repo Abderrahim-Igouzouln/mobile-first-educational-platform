@@ -16,7 +16,7 @@ import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
 import { radius } from '../../../shared/constants/radius';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { LoadingSpinner } from '../../../shared/components/ui/LoadingSpinner';
+import { LoadingSpinner } from '../../../shared/components/ui/feedback/LoadingSpinner';
 import { MarkdownRenderer } from '../components/MarkdownRenderer';
 import { BookmarkButton } from '../components/BookmarkButton';
 import { useNotes } from '../hooks/useNotes';

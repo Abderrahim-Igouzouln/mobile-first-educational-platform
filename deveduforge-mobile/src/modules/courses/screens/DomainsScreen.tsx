@@ -8,7 +8,7 @@ import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
 import { radius } from '../../../shared/constants/radius';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { LoadingSpinner } from '../../../shared/components/ui/LoadingSpinner';
+import { LoadingSpinner } from '../../../shared/components/ui/feedback/LoadingSpinner';
 import { DomainCard } from '../components/DomainCard';
 import { useDomains } from '../services/courseService';
 import type { Domain } from '../courses.types';

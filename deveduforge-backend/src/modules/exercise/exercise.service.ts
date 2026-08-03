@@ -1,7 +1,9 @@
 import { ExerciseRepository } from './exercise.repository';
-import { NotFoundError } from '../../utils/errors.util';
+import { NotFoundError } from '../../utils/response/errors.util';
+import { CertificationService } from '../certification/certification.service';
 
 const repo = new ExerciseRepository();
+const certificationService = new CertificationService();
 
 export class ExerciseService {
   async getExercise(lessonId: string) {
@@ -82,6 +84,8 @@ export class ExerciseService {
     const attemptNumber = (lastAttempt?.attemptNumber || 0) + 1;
 
     await repo.createExerciseResult(userId, exerciseId, scorePercent, passed, attemptNumber);
+
+    await certificationService.checkAndUnlockCertificate(userId, exercise.lesson.courseId).catch(() => {});
 
     return { exerciseId, passed, scorePercent, attemptNumber, questionsResults: results };
   }

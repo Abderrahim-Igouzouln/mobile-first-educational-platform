@@ -13,7 +13,7 @@ import { ContinueLearningCard } from '../components/ContinueLearningCard';
 import { StatsWidget } from '../components/StatsWidget';
 import { RecentActivityList } from '../components/RecentActivityList';
 import { useAuth } from '../../../core/auth/useAuth';
-import { useDomains, useContinueLearning, useUserStats } from '../services/homeService';
+import { useDomains, useContinueLearning, useUserStats, useRecentActivity } from '../services/homeService';
 import type { HomeStackParamList } from '../../../core/navigation/navigation.types';
 
 type NavProp = NativeStackNavigationProp<HomeStackParamList, 'HomeScreen'>;
@@ -24,14 +24,16 @@ export default function HomeScreen() {
   const { data: domains = [], refetch: refetchDomains, isRefetching: domainsRefetching } = useDomains();
   const { data: continueLearning = [], refetch: refetchContinue, isRefetching: continueRefetching } = useContinueLearning();
   const { data: stats = [], refetch: refetchStats, isRefetching: statsRefetching } = useUserStats();
+  const { data: activities = [], refetch: refetchActivity, isRefetching: activityRefetching } = useRecentActivity();
 
-  const refreshing = domainsRefetching || continueRefetching || statsRefetching;
+  const refreshing = domainsRefetching || continueRefetching || statsRefetching || activityRefetching;
 
   const onRefresh = useCallback(() => {
     refetchDomains();
     refetchContinue();
     refetchStats();
-  }, [refetchDomains, refetchContinue, refetchStats]);
+    refetchActivity();
+  }, [refetchDomains, refetchContinue, refetchStats, refetchActivity]);
 
   const firstName = user?.firstName || '';
   const currentLesson = continueLearning[0];
@@ -83,7 +85,7 @@ export default function HomeScreen() {
 
         <StatsWidget stats={stats} />
 
-        <RecentActivityList activities={[]} />
+        <RecentActivityList activities={activities} />
       </ScrollView>
     </ScreenWrapper>
   );

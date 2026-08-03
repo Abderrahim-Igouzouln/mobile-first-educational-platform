@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ViewStyle } from 'react-native';
 import { Check, Crown, Star } from 'lucide-react-native';
-import { Button } from '../../../shared/components/ui/Button';
+import { Button } from '../../../shared/components/ui/input/Button';
 import { colors } from '../../../shared/constants/colors';
 import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';

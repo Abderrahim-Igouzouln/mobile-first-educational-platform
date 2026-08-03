@@ -3,7 +3,7 @@ const mockPrisma = {
   userActivity: { create: jest.fn() },
 };
 
-jest.mock('../../../src/config/database', () => ({
+jest.mock('../../../src/config/database/prisma', () => ({
   prisma: mockPrisma,
 }));
 
@@ -36,7 +36,7 @@ jest.mock('../../../src/modules/course/course.repository', () => ({
 }));
 
 import { CourseService } from '../../../src/modules/course/course.service';
-import { NotFoundError } from '../../../src/utils/errors.util';
+import { NotFoundError } from '../../../src/utils/response/errors.util';
 
 describe('CourseService', () => {
   let service: CourseService;

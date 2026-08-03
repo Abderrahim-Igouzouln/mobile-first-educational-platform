@@ -1,42 +1,51 @@
 import { useQuery } from '@tanstack/react-query';
 import { queryKeys } from '../../../lib/react-query/queryKeys';
-import * as userEndpoints from '../../../core/api/endpoints/user.endpoints';
 import * as courseEndpoints from '../../../core/api/endpoints/course.endpoints';
-import type { StatItem, ContinueLearning, Domain } from '../home.types';
+import * as progressEndpoints from '../../../core/api/endpoints/progress.endpoints';
+import type { StatItem, ContinueLearning, Domain, ActivityItem } from '../home.types';
+
+const DASHBOARD_KEY = queryKeys.progress.dashboard();
 
 export const useUserStats = () =>
   useQuery({
-    queryKey: [...queryKeys.user.all, 'stats'],
-    queryFn: async () => {
-      await userEndpoints.getProfile();
+    queryKey: DASHBOARD_KEY,
+    queryFn: () => progressEndpoints.getDashboard(),
+    select: (dashboard) => {
       const stats: StatItem[] = [
-        {
-          id: 'courses',
-          label: 'Cours',
-          value: '0',
-          suffix: '',
-        },
-        {
-          id: 'streak',
-          label: 'Séquence',
-          value: '0',
-          suffix: 'jours',
-        },
-        {
-          id: 'score',
-          label: 'Score moyen',
-          value: '0',
-          suffix: '%',
-          isHighlighted: true,
-        },
-        {
-          id: 'certifications',
-          label: 'Certifications',
-          value: '0',
-          suffix: '',
-        },
+        { id: 'courses', label: 'Cours', value: String(dashboard.stats.totalCompleted), suffix: '' },
+        { id: 'streak', label: 'Séquence', value: String(dashboard.stats.currentStreak), suffix: 'jours' },
+        { id: 'score', label: 'Score moyen', value: '0', suffix: '%', isHighlighted: true },
+        { id: 'certifications', label: 'Certifications', value: String(dashboard.stats.achievements), suffix: '' },
       ];
       return stats;
+    },
+  });
+
+export const useRecentActivity = () =>
+  useQuery({
+    queryKey: DASHBOARD_KEY,
+    queryFn: () => progressEndpoints.getDashboard(),
+    select: (dashboard) => {
+      const activities: ActivityItem[] = dashboard.recentActivity.map((a, i) => {
+        let type: 'course' | 'exercise' | 'certification' = 'course';
+        let color = '#00205B';
+        if (a.type.includes('exercise') || a.type.includes('quiz')) {
+          type = 'exercise';
+          color = '#FF6B35';
+        } else if (a.type.includes('certificate') || a.type.includes('certification')) {
+          type = 'certification';
+          color = '#00A86B';
+        }
+        return {
+          id: `${i}`,
+          type,
+          title: a.type,
+          description: typeof a.metadata?.description === 'string' ? a.metadata.description : '',
+          timestamp: new Date(a.createdAt).toLocaleDateString('fr-FR'),
+          color,
+        };
+      });
+      return activities;
     },
   });
 

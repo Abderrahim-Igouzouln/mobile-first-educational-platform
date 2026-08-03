@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { verifyAccessToken } from '../../utils/jwt.util';
-import { UnauthorizedError } from '../../utils/errors.util';
+import { verifyAccessToken } from '../../utils/security/jwt.util';
+import { UnauthorizedError } from '../../utils/response/errors.util';
 
 export async function extractUser(req: Request, _res: Response, next: NextFunction): Promise<void> {
   try {

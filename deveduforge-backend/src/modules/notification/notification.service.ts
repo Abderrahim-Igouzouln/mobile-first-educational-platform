@@ -1,5 +1,5 @@
 import { NotificationRepository } from './notification.repository';
-import { NotFoundError } from '../../utils/errors.util';
+import { NotFoundError } from '../../utils/response/errors.util';
 
 const repo = new NotificationRepository();
 

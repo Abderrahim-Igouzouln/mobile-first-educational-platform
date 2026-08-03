@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ArrowRight, PenTool, FolderKanban } from 'lucide-react-native';
+import { ArrowRight, PenTool, FolderKanban, Star } from 'lucide-react-native';
 import { colors } from '../../../shared/constants/colors';
 import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
 import { radius } from '../../../shared/constants/radius';
 import { shadows } from '../../../shared/constants/shadows';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { LoadingSpinner } from '../../../shared/components/ui/LoadingSpinner';
+import { LoadingSpinner } from '../../../shared/components/ui/feedback/LoadingSpinner';
 import { CourseHeader } from '../components/CourseHeader';
 import { LessonItem } from '../components/LessonItem';
 import { CourseProgress } from '../components/CourseProgress';
@@ -26,6 +26,7 @@ const TABS: TabOption[] = [
   { key: 'lectures', label: 'Lecture' },
   { key: 'exercices', label: 'Exercices' },
   { key: 'projets', label: 'Projets' },
+  { key: 'avis', label: 'Avis' },
 ];
 
 export const CourseScreen: React.FC = () => {
@@ -207,6 +208,21 @@ export const CourseScreen: React.FC = () => {
           }
         />
       )}
+
+      {activeTab === 'avis' && (
+        <View style={styles.centerContent}>
+          <Star size={48} color={colors.semantic.warning} />
+          <Text style={styles.sectionTitle}>Avis des apprenants</Text>
+          <Text style={styles.emptyText}>Découvrez ce que les autres apprenants pensent de ce cours.</Text>
+          <TouchableOpacity
+            style={styles.reviewButton}
+            onPress={() => course?.id && navigation.navigate('CourseReviewsScreen', { courseId: course.id })}
+          >
+            <Star size={18} color={colors.neutral.surface} />
+            <Text style={styles.reviewButtonText}>Voir les avis</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </ScreenWrapper>
   );
 };
@@ -273,6 +289,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: spacing.xl,
+    gap: spacing.md,
+  },
+  reviewButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    backgroundColor: colors.brand.orange,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xxl,
+    borderRadius: radius.md,
+    marginTop: spacing.md,
+  },
+  reviewButtonText: {
+    ...typography.body,
+    color: colors.neutral.surface,
+    fontWeight: '700',
   },
   errorText: {
     ...typography.body,

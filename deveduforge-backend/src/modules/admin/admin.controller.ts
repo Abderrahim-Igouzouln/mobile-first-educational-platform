@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { prisma } from '../../config/database';
-import { sendSuccess } from '../../utils/apiResponse.util';
+import { prisma } from '../../config/database/prisma';
+import { sendSuccess } from '../../utils/response/apiResponse.util';
 
 export async function getDashboardStats(_req: Request, res: Response, next: NextFunction): Promise<void> {
   try {

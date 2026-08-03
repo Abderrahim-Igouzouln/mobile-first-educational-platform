@@ -1,7 +1,8 @@
 import { randomUUID } from 'crypto';
 import { PaymentRepository } from './payment.repository';
 import { StripeProvider } from './providers/stripe.provider';
-import { NotFoundError, ConflictError } from '../../utils/errors.util';
+import { NotFoundError, ConflictError, ForbiddenError } from '../../utils/response/errors.util';
+import { prisma } from '../../config/database/prisma';
 
 const repo = new PaymentRepository();
 const stripeProvider = new StripeProvider();
@@ -105,11 +106,50 @@ export class PaymentService {
 
     const session = await stripeProvider.createCheckoutSession({
       priceMad: Number(plan.priceMad),
-      planCode: plan.code,
-      planName: plan.name,
+      productCode: plan.code,
+      productName: plan.name,
       successUrl,
       cancelUrl,
       clientReferenceId: userId,
+      metadata: { paymentType: 'subscription' },
+    });
+
+    await repo.updatePaymentStatus(payment.id, 'pending', session.id);
+
+    return { url: session.url, sessionId: session.id };
+  }
+
+  async createCertificateCheckoutSession(userId: string, certificateId: string, successUrl: string, cancelUrl: string) {
+    const cert = await prisma.certificate.findUnique({
+      where: { id: certificateId },
+      include: { course: { select: { title: true } } },
+    });
+    if (!cert) throw new NotFoundError('Certificat introuvable.');
+    if (cert.userId !== userId) throw new ForbiddenError('Ce certificat ne vous appartient pas.');
+    if (cert.status === 'paid') throw new ConflictError('Ce certificat a déjà été payé.');
+    if (cert.status !== 'unlocked') throw new ForbiddenError('Ce certificat n\'est pas encore débloqué.');
+
+    const amountMad = Number(cert.priceMad);
+
+    const payment = await repo.createPayment({
+      amountMad,
+      status: 'pending',
+      provider: 'stripe',
+      providerPaymentId: '',
+      idempotencyKey: randomUUID(),
+      type: 'certificate',
+      user: { connect: { id: userId } },
+      certificate: { connect: { id: certificateId } },
+    } as any);
+
+    const session = await stripeProvider.createCheckoutSession({
+      priceMad: amountMad,
+      productCode: cert.certificateNumber,
+      productName: `Certificat - ${cert.course.title}`,
+      successUrl,
+      cancelUrl,
+      clientReferenceId: userId,
+      metadata: { paymentType: 'certificate', certificateId: cert.id },
     });
 
     await repo.updatePaymentStatus(payment.id, 'pending', session.id);
@@ -140,6 +180,18 @@ export class PaymentService {
           const apiBaseUrl = process.env.API_BASE_URL || 'http://localhost:4000';
           const pdfUrl = `${apiBaseUrl}/api/v1/payments/invoices/${invoice.id}/view`;
           await repo.updateInvoicePdfUrl(invoice.id, pdfUrl);
+        }
+
+        if (payment.type === 'certificate') {
+          const cert = await prisma.certificate.findFirst({
+            where: { paymentId: payment.id },
+          });
+          if (cert) {
+            await prisma.certificate.update({
+              where: { id: cert.id },
+              data: { status: 'paid', paidAt: new Date() },
+            });
+          }
         }
         break;
       }

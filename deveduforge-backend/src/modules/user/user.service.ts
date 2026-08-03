@@ -1,6 +1,6 @@
-import { prisma } from '../../config/database';
+import { prisma } from '../../config/database/prisma';
 import { UserRepository } from './user.repository';
-import { NotFoundError, ForbiddenError } from '../../utils/errors.util';
+import { NotFoundError, ForbiddenError } from '../../utils/response/errors.util';
 
 const repo = new UserRepository();
 

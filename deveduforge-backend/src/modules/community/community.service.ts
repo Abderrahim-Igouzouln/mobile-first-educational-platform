@@ -1,5 +1,5 @@
 import { CommunityRepository } from './community.repository';
-import { NotFoundError, ForbiddenError } from '../../utils/errors.util';
+import { NotFoundError, ForbiddenError } from '../../utils/response/errors.util';
 
 const repo = new CommunityRepository();
 

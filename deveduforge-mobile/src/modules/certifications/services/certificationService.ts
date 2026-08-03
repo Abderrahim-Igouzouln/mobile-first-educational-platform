@@ -3,19 +3,22 @@ import { queryKeys } from '../../../lib/react-query/queryKeys';
 import * as certificationEndpoints from '../../../core/api/endpoints/certification.endpoints';
 import type { Certificate } from '../certifications.types';
 
-const mapCertificate = (c: certificationEndpoints.Certificate): Certificate => ({
+const mapCertificate = (c: certificationEndpoints.CertificateDTO): Certificate => ({
   id: c.id,
-  technologyId: c.technologyId,
+  certificateNumber: c.certificateNumber,
   technologyName: c.technologyName,
-  technologyIcon: 'Award',
-  level: 'debutant',
-  fullName: '',
-  issueDate: c.issuedAt,
-  certificateNumber: c.number,
-  score: 0,
-  totalQuestions: 0,
-  pdfUrl: c.downloadUrl,
-  verificationUrl: `/certifications/verify/${c.number}`,
+  technologySlug: c.technologySlug,
+  scorePercent: c.scorePercent,
+  issuedAt: c.issuedAt,
+  pdfUrl: c.pdfUrl,
+  status: c.status,
+  priceMad: c.priceMad,
+  unlockedAt: c.unlockedAt,
+  paidAt: c.paidAt,
+  fullName: c.fullName,
+  verificationUrl: c.verificationUrl,
+  courseId: c.courseId,
+  courseTitle: c.courseTitle,
 });
 
 export const useCertificates = () =>
@@ -27,11 +30,28 @@ export const useCertificates = () =>
     },
   });
 
+export const useCompletionStatus = (courseId: string) =>
+  useQuery({
+    queryKey: [...queryKeys.certifications.all, 'completion', courseId],
+    queryFn: () => certificationEndpoints.getCompletionStatus(courseId),
+    enabled: !!courseId,
+  });
+
+export const useRequestCheckout = () =>
+  useMutation({
+    mutationFn: (certificateId: string) => certificationEndpoints.requestCheckout(certificateId),
+  });
+
+export const useDownloadCertificate = () =>
+  useMutation({
+    mutationFn: (certificateId: string) => certificationEndpoints.downloadCertificate(certificateId),
+  });
+
 export const useIssueCertificate = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (technologyId: string) =>
-      certificationEndpoints.issueCertificate({ technologyId }),
+    mutationFn: (data: { courseId: string; scorePercent: number }) =>
+      certificationEndpoints.issueCertificate(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.certifications.all });
     },

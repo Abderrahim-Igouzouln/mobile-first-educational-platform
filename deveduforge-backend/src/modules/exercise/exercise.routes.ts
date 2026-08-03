@@ -60,7 +60,7 @@
 import { Router } from 'express';
 import * as exerciseController from './exercise.controller';
 import { extractUser } from '../auth/auth.middleware';
-import { validationMiddleware } from '../../middleware/validation.middleware';
+import { validationMiddleware } from '../../middleware/validation/validation.middleware';
 import { submitAnswerSchema, submitExerciseSchema } from './exercise.validation';
 
 const router = Router();

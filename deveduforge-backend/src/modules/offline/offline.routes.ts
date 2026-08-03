@@ -40,7 +40,7 @@
 import { Router } from 'express';
 import * as offlineController from './offline.controller';
 import { extractUser } from '../auth/auth.middleware';
-import { validationMiddleware } from '../../middleware/validation.middleware';
+import { validationMiddleware } from '../../middleware/validation/validation.middleware';
 import { z } from 'zod';
 
 const syncSchema = z.object({

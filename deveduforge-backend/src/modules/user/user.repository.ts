@@ -1,4 +1,4 @@
-import { prisma } from '../../config/database';
+import { prisma } from '../../config/database/prisma';
 
 export class UserRepository {
   async findById(id: string) {

@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import { Bell, CheckCheck } from 'lucide-react-native';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { SkeletonLoader } from '../../../shared/components/ui/SkeletonLoader';
+import { SkeletonLoader } from '../../../shared/components/ui/feedback/SkeletonLoader';
 import { useTheme } from '../../../shared/hooks/useTheme';
 import { spacing } from '../../../shared/constants/spacing';
 import { useGetNotifications, useMarkAllRead, useMarkRead } from '../services/notificationService';

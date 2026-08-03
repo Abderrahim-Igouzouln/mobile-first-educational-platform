@@ -93,11 +93,11 @@
 import { Router } from 'express';
 import * as courseController from './course.controller';
 import { extractUser } from '../auth/auth.middleware';
-import { roleMiddleware } from '../../middleware/role.middleware';
-import { validationMiddleware } from '../../middleware/validation.middleware';
+import { roleMiddleware } from '../../middleware/auth/role.middleware';
+import { validationMiddleware } from '../../middleware/validation/validation.middleware';
 import { createCourseSchema, updateCourseSchema, createLessonSchema, reorderLessonsSchema, completeLessonSchema } from './course.validation';
 import { Role } from '../../constants/roles';
-import { optionalAuth } from '../../middleware/optionalAuth.middleware';
+import { optionalAuth } from '../../middleware/auth/optionalAuth.middleware';
 
 const router = Router();
 

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ProjectService } from './project.service';
-import { sendSuccess, sendCreated } from '../../utils/apiResponse.util';
+import { sendSuccess, sendCreated } from '../../utils/response/apiResponse.util';
 
 const projectService = new ProjectService();
 

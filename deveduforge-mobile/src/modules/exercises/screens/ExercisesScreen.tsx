@@ -11,8 +11,8 @@ import { spacing } from '../../../shared/constants/spacing';
 import { radius } from '../../../shared/constants/radius';
 import { shadows } from '../../../shared/constants/shadows';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { LoadingSpinner } from '../../../shared/components/ui/LoadingSpinner';
-import { EmptyState } from '../../../shared/components/ui/EmptyState';
+import { LoadingSpinner } from '../../../shared/components/ui/feedback/LoadingSpinner';
+import { EmptyState } from '../../../shared/components/ui/display/EmptyState';
 import { ExerciseCard } from '../components/ExerciseCard';
 import { useExercise } from '../services/exerciseService';
 

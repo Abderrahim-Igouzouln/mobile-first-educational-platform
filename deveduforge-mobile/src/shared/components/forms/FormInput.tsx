@@ -2,7 +2,7 @@ import React from 'react';
 import { TextInputProps as RNTextInputProps } from 'react-native';
 import { useController, UseControllerProps, FieldValues } from 'react-hook-form';
 import { LucideIcon } from 'lucide-react-native';
-import { Input } from '../ui/Input';
+import { Input } from '../ui/input/Input';
 
 interface FormInputProps<T extends FieldValues = FieldValues>
   extends Omit<UseControllerProps<T>, 'render'> {

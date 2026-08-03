@@ -11,7 +11,7 @@ import { colors } from '../../../shared/constants/colors';
 import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { Button } from '../../../shared/components/ui/Button';
+import { Button } from '../../../shared/components/ui/input/Button';
 import type { AuthStackParamList } from '../../../core/navigation/navigation.types';
 
 type NavigationProp = NativeStackNavigationProp<AuthStackParamList>;

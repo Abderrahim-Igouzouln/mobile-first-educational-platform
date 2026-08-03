@@ -1,15 +1,18 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, ScrollView, TextInput, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Search, FolderOpen } from 'lucide-react-native';
 import type { Project } from '../projects.types';
+import type { CourseStackParamList } from '../../../core/navigation/navigation.types';
 import { colors } from '../../../shared/constants/colors';
 import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
 import { radius } from '../../../shared/constants/radius';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { Chip } from '../../../shared/components/ui/Chip';
-import { Card } from '../../../shared/components/ui/Card';
-import { EmptyState } from '../../../shared/components/ui/EmptyState';
+import { Chip } from '../../../shared/components/ui/input/Chip';
+import { Card } from '../../../shared/components/ui/display/Card';
+import { EmptyState } from '../../../shared/components/ui/display/EmptyState';
 import { ProjectCard } from '../components/ProjectCard';
 import { ProjectStatusBadge } from '../components/ProjectStatusBadge';
 import { useProjects, useMyProjects } from '../services/projectService';
@@ -24,6 +27,7 @@ const FILTERS: { key: FilterKey; label: string }[] = [
 ];
 
 export const ProjectsScreen: React.FC = () => {
+  const navigation = useNavigation<NativeStackNavigationProp<CourseStackParamList>>();
   const [activeFilter, setActiveFilter] = useState<FilterKey>('tous');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -50,7 +54,7 @@ export const ProjectsScreen: React.FC = () => {
   }, [activeFilter, searchQuery, projects]);
 
   const handleProjectPress = (project: Project) => {
-    // navigation.navigate('ProjectDetailScreen', { projectId: project.id });
+    navigation.navigate('ProjectDetailScreen', { projectId: project.id });
   };
 
   return (

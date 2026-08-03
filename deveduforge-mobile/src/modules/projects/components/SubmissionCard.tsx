@@ -7,8 +7,8 @@ import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
 import { radius } from '../../../shared/constants/radius';
 import { shadows } from '../../../shared/constants/shadows';
-import { Card } from '../../../shared/components/ui/Card';
-import { Avatar } from '../../../shared/components/ui/Avatar';
+import { Card } from '../../../shared/components/ui/display/Card';
+import { Avatar } from '../../../shared/components/ui/display/Avatar';
 import { ProjectStatusBadge } from './ProjectStatusBadge';
 
 interface SubmissionCardProps {

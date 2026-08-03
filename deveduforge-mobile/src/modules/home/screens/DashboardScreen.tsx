@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { ScrollView, RefreshControl, View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { BarChart3, TrendingUp, Award, Flame, BookOpen } from 'lucide-react-native';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { Card } from '../../../shared/components/ui/Card';
+import { Card } from '../../../shared/components/ui/display/Card';
 import { colors } from '../../../shared/constants/colors';
 import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
