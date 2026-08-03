@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, Alert, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -8,7 +8,7 @@ import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
 import { radius } from '../../../shared/constants/radius';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { LoadingSpinner } from '../../../shared/components/ui/LoadingSpinner';
+import { LoadingSpinner } from '../../../shared/components/ui/feedback/LoadingSpinner';
 import { TechnologyCard } from '../components/TechnologyCard';
 import { useTechnologies } from '../services/courseService';
 import type { Technology } from '../courses.types';
@@ -26,7 +26,14 @@ export const TechnologiesScreen: React.FC = () => {
 
   const handleTechnologyPress = (technology: Technology) => {
     if (technology.isLocked) {
-      navigation.navigate('CourseScreen', { technologySlug: technology.slug });
+      Alert.alert(
+        'Technologie verrouillée',
+        'Cette technologie est réservée aux abonnés. Souscrivez à un abonnement pour y accéder.',
+        [
+          { text: 'Annuler', style: 'cancel' },
+          { text: 'Voir les abonnements', onPress: () => {} },
+        ],
+      );
       return;
     }
     navigation.navigate('CourseScreen', { technologySlug: technology.slug });

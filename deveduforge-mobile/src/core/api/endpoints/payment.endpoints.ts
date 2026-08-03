@@ -76,6 +76,11 @@ export const createCheckoutSession = async (data: { planCode: string; successUrl
   return response.data.data;
 };
 
+export const createCertificateCheckoutSession = async (data: { certificateId: string; successUrl: string; cancelUrl: string }): Promise<CheckoutSession> => {
+  const response = await apiClient.post<ApiResponse<CheckoutSession>>('/payments/create-certificate-checkout-session', data);
+  return response.data.data;
+};
+
 export const getPayments = async (): Promise<Payment[]> => {
   const response = await apiClient.get<ApiResponse<Payment[]>>('/payments/payments');
   return response.data.data;

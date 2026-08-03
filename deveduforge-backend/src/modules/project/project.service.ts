@@ -1,7 +1,9 @@
 import { ProjectRepository } from './project.repository';
-import { NotFoundError } from '../../utils/errors.util';
+import { NotFoundError } from '../../utils/response/errors.util';
+import { CertificationService } from '../certification/certification.service';
 
 const repo = new ProjectRepository();
+const certificationService = new CertificationService();
 
 export class ProjectService {
   async getProjects(courseId: string) {
@@ -40,6 +42,10 @@ export class ProjectService {
 
     await repo.addReview({ submissionId, reviewerId, score, feedback });
     await repo.updateSubmissionStatus(submissionId, score >= 70 ? 'approved' : 'rejected');
+
+    if (score >= 70) {
+      await certificationService.checkAndUnlockCertificate(submission.userId, submission.project.courseId).catch(() => {});
+    }
 
     return { submissionId, status: score >= 70 ? 'approved' : 'rejected' };
   }

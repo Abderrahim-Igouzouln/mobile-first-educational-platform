@@ -26,6 +26,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
           if (response.status === 200) {
             setUser(response.data.data);
+            const freshTokens = await getTokens();
+            if (freshTokens) {
+              setTokensState(freshTokens);
+            }
           } else {
             await clearTokens();
           }
@@ -56,9 +60,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const logout = useCallback(async () => {
-    await clearTokens();
-    setTokensState(null);
-    setUser(null);
+    try {
+      const currentTokens = await getTokens();
+      if (currentTokens) {
+        await apiClient.post('/auth/logout', { refreshToken: currentTokens.refreshToken });
+      }
+    } catch {
+    } finally {
+      await clearTokens();
+      setTokensState(null);
+      setUser(null);
+    }
   }, []);
 
   const updateUser = useCallback((updatedUser: User) => {

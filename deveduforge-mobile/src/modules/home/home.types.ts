@@ -1,5 +1,6 @@
 export interface Domain {
   id: string;
+  slug: string;
   name: string;
   techCount: number;
   isActive: boolean;

@@ -21,6 +21,9 @@ import DiscussionScreen from '../../modules/community/screens/DiscussionScreen';
 import NewPostScreen from '../../modules/community/screens/NewPostScreen';
 import MentorshipScreen from '../../modules/community/screens/MentorshipScreen';
 import StudyGroupsScreen from '../../modules/community/screens/StudyGroupsScreen';
+import StudyGroupDetailScreen from '../../modules/community/screens/StudyGroupDetailScreen';
+import MentorProfileScreen from '../../modules/community/screens/MentorProfileScreen';
+import LeaderboardScreen from '../../modules/community/screens/LeaderboardScreen';
 import { ExercisesScreen } from '../../modules/exercises/screens/ExercisesScreen';
 import { QuizScreen } from '../../modules/exercises/screens/QuizScreen';
 import { ExerciseResultScreen } from '../../modules/exercises/screens/ExerciseResultScreen';
@@ -44,6 +47,10 @@ import { InstructorDashboardScreen } from '../../modules/instructor/screens/Inst
 import { NotificationCenterScreen } from '../../modules/notifications/screens/NotificationCenterScreen';
 import PaymentScreen from '../../modules/subscription/screens/PaymentScreen';
 import PaymentSuccessScreen from '../../modules/subscription/screens/PaymentSuccessScreen';
+import AchievementsScreen from '../../modules/profile/screens/AchievementsScreen';
+import SavedCoursesScreen from '../../modules/courses/screens/SavedCoursesScreen';
+import HelpScreen from '../../modules/profile/screens/HelpScreen';
+import LegalScreen from '../../modules/profile/screens/LegalScreen';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
@@ -65,6 +72,9 @@ const CommunityNavigator = () => (
     <CommunityStack.Screen name="NewPostScreen" component={NewPostScreen} />
     <CommunityStack.Screen name="MentorshipScreen" component={MentorshipScreen} />
     <CommunityStack.Screen name="StudyGroupsScreen" component={StudyGroupsScreen} />
+    <CommunityStack.Screen name="StudyGroupDetailScreen" component={StudyGroupDetailScreen} />
+    <CommunityStack.Screen name="MentorProfileScreen" component={MentorProfileScreen} />
+    <CommunityStack.Screen name="LeaderboardScreen" component={LeaderboardScreen} />
   </CommunityStack.Navigator>
 );
 
@@ -106,6 +116,10 @@ const ProfileNavigator = () => (
     <ProfileStack.Screen name="SubscriptionScreen" component={SubscriptionScreen} />
     <ProfileStack.Screen name="PaymentScreen" component={PaymentScreen} />
     <ProfileStack.Screen name="PaymentSuccessScreen" component={PaymentSuccessScreen} />
+    <ProfileStack.Screen name="AchievementsScreen" component={AchievementsScreen} />
+    <ProfileStack.Screen name="SavedCoursesScreen" component={SavedCoursesScreen} />
+    <ProfileStack.Screen name="HelpScreen" component={HelpScreen} />
+    <ProfileStack.Screen name="LegalScreen" component={LegalScreen} />
   </ProfileStack.Navigator>
 );
 

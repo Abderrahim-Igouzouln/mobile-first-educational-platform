@@ -1,5 +1,7 @@
 import { PrismaClient, QuestionType, Level, Role } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import { ALL_COURSE_CONTENT } from './content';
+import type { CourseContent } from './content';
 
 const prisma = new PrismaClient();
 
@@ -72,12 +74,22 @@ async function main() {
   }
   console.log('✔ Technologies (8)');
 
-  // ── Courses (skip if already seeded) ───────────────────────────────
+  // ── Courses (skip if already fully seeded) ─────────────────────────
   const existingCourseCount = await prisma.course.count();
-  if (existingCourseCount > 0) {
+  const existingLessonCount = await prisma.lesson.count();
+  if (existingCourseCount > 0 && existingLessonCount > 0) {
     console.log('→ Courses already seeded, skipping content seed');
     console.log('\n✅ Seed completed successfully!');
     return;
+  }
+  if (existingCourseCount > 0) {
+    console.log('→ Courses exist but content incomplete, re-seeding...');
+    await prisma.project.deleteMany();
+    await prisma.answerOption.deleteMany();
+    await prisma.question.deleteMany();
+    await prisma.exercise.deleteMany();
+    await prisma.lesson.deleteMany();
+    await prisma.course.deleteMany();
   }
 
   interface CourseDef { techSlug: string; title: string; description: string; level: Level; durationMin: number }
@@ -100,7 +112,7 @@ async function main() {
     { techSlug: 'aws', title: 'AWS Solutions Architect', description: 'Architecture cloud avancée et bonnes pratiques', level: Level.advanced, durationMin: 480 },
   ];
 
-  const courseIds: Array<{ id: string; techSlug: string }> = [];
+  const courseIds: Array<{ id: string; techSlug: string; title: string }> = [];
   const instructorId = userIds['instructor@deveduforge.com'];
   for (const cd of courseDefs) {
     const course = await prisma.course.create({
@@ -114,142 +126,167 @@ async function main() {
         authorId: instructorId,
       },
     });
-    courseIds.push({ id: course.id, techSlug: cd.techSlug });
+    courseIds.push({ id: course.id, techSlug: cd.techSlug, title: cd.title });
   }
   console.log(`✔ Courses (${courseIds.length})`);
 
-  // ── Lessons ────────────────────────────────────────────────────────
-  const lessonTitles: string[][] = [
-    ['JSX et Composants', 'State et Props', 'Événements', 'Cycle de vie'],
-    ['Hooks personnalisés', 'useContext', 'Performance', 'Patterns avancés'],
-    ['Premiers pas avec Vue', 'Composition API', 'Directives', 'Formulaires'],
-    ['Vue Router', 'Pinia', 'Composables', 'Tests'],
-    ['Environnement Node.js', 'Express et routes', 'Prisma ORM', 'JWT Auth'],
-    ['Architecture microservices', 'RabbitMQ', 'API Gateway', 'Monitoring'],
-    ['Introduction à FastAPI', 'Pydantic', 'SQLAlchemy', 'Tests pytest'],
-    ['Introduction à Pandas', 'Manipulation données', 'Matplotlib', 'ML basique'],
-    ['Environnement Expo', 'Composants base', 'Navigation', 'API natives'],
-    ['Animations Reanimated', 'Performance', 'Offline', 'Déploiement'],
-    ['Introduction à Dart', 'Widgets', 'Navigation', 'Provider'],
-    ['State Bloc', 'Firebase', 'Notifications push', 'CI/CD'],
-    ['Conteneurisation', 'Dockerfile', 'Compose', 'Registres'],
-    ['Sécurité conteneurs', 'Swarm', 'Prometheus', 'GitHub Actions'],
-    ['Cloud Computing', 'Services AWS', 'IAM', 'Pricing'],
-    ['Architecture multi-tier', 'Haute dispo', 'Migration', 'Cost optimization'],
-  ];
+  // ── Content-driven Lessons, Exercises & Projects ───────────────────
+  let lessonCount = 0, exCount = 0, qCount = 0, optCount = 0, projectCount = 0;
 
-  const markdown = `
+  for (const courseEntry of courseIds) {
+    const content: CourseContent | undefined = ALL_COURSE_CONTENT[courseEntry.title];
+    const courseId = courseEntry.id;
+
+    if (content) {
+      // ── Real content from prisma/content/ ──
+      for (let li = 0; li < content.lessons.length; li++) {
+        const lessonDef = content.lessons[li];
+        const lesson = await prisma.lesson.create({
+          data: {
+            courseId,
+            title: lessonDef.title,
+            contentMarkdown: lessonDef.contentMarkdown,
+            order: li + 1,
+            durationMin: lessonDef.durationMin,
+            isPublished: true,
+          },
+        });
+        lessonCount++;
+
+        const exercise = await prisma.exercise.create({
+          data: {
+            lessonId: lesson.id,
+            title: lessonDef.exercise.title,
+            passingScorePercent: lessonDef.exercise.passingScorePercent,
+          },
+        });
+        exCount++;
+
+        for (let qi = 0; qi < lessonDef.exercise.questions.length; qi++) {
+          const qDef = lessonDef.exercise.questions[qi];
+          const question = await prisma.question.create({
+            data: {
+              exerciseId: exercise.id,
+              type: QuestionType.mcq,
+              prompt: qDef.prompt,
+              explanation: qDef.explanation,
+              order: qi + 1,
+              points: qDef.points,
+            },
+          });
+          qCount++;
+
+          for (const optDef of qDef.options) {
+            await prisma.answerOption.create({
+              data: {
+                questionId: question.id,
+                label: optDef.label,
+                isCorrect: optDef.isCorrect,
+                order: optDef.order,
+              },
+            });
+            optCount++;
+          }
+        }
+      }
+
+      await prisma.project.create({
+        data: {
+          courseId,
+          title: content.project.title,
+          instructions: content.project.instructions,
+          evaluationCriteria: JSON.stringify(content.project.evaluationCriteria),
+        },
+      });
+      projectCount++;
+      console.log(`  ✅ "${content.title}" — ${content.lessons.length} leçons, ${content.lessons.length} exercices, 1 projet`);
+    } else {
+      // ── Fallback: placeholder content ──
+      const fallbackTitles = ['Introduction', 'Concepts clés', 'Mise en pratique', 'Aller plus loin'];
+      const fallbackMarkdown = `
 ## Objectifs
-
 - Comprendre les concepts clés
 - Savoir les appliquer
 - Être capable de les reproduire
 
 ## Contenu
-
 Cette leçon couvre les notions fondamentales avec des exemples pratiques.
 
 \`\`\`typescript
-// Exemple de code
-const exemple = () => {
-  console.log('Hello DevEduForge!');
-};
+const exemple = () => { console.log('Hello DevEduForge!'); };
 \`\`\`
 
 ## Exercice
-
 Créez un petit projet qui applique les concepts vus.
 
 ## Résumé
-
 - Concept clé 1
 - Concept clé 2
 - Bonnes pratiques
-`.trim();
+      `.trim();
 
-  let lessonCount = 0;
-  for (let ci = 0; ci < courseIds.length; ci++) {
-    const course = courseIds[ci];
-    const titles = lessonTitles[ci];
-    for (let li = 0; li < titles.length; li++) {
-      await prisma.lesson.create({
-        data: {
-          courseId: course.id,
-          title: titles[li],
-          contentMarkdown: `# ${titles[li]}\n\n${markdown}`,
-          order: li + 1,
-          durationMin: 20 + li * 5,
-          isPublished: true,
-        },
-      });
-      lessonCount++;
-    }
-  }
-  console.log(`✔ Lessons (${lessonCount})`);
-
-  // ── Projects ───────────────────────────────────────────────────────
-  let projectCount = 0;
-  for (const course of courseIds) {
-    await prisma.project.create({
-      data: {
-        courseId: course.id,
-        title: `Projet pratique`,
-        instructions: `# Projet\n\nCréez une application complète mettant en œuvre les concepts du cours.`,
-        evaluationCriteria: JSON.stringify(['Qualité du code', 'Fonctionnalités', 'Tests', 'Documentation']),
-      },
-    });
-    projectCount++;
-  }
-  console.log(`✔ Projects (${projectCount})`);
-
-  // ── Exercises + Questions + Options ────────────────────────────────
-  const allLessons = await prisma.lesson.findMany();
-  const questions = [
-    { prompt: 'Quelle est la bonne pratique à suivre ?', correctIdx: 0 },
-    { prompt: 'Quel outil est le plus adapté ?', correctIdx: 0 },
-    { prompt: 'Laquelle de ces affirmations est vraie ?', correctIdx: 0 },
-  ];
-  const options = [
-    'Option A : réponse correcte',
-    'Option B : réponse incorrecte',
-    'Option C : réponse incorrecte',
-    'Option D : réponse incorrecte',
-  ];
-
-  let exCount = 0, qCount = 0, optCount = 0;
-  for (const lesson of allLessons) {
-    const ex = await prisma.exercise.create({
-      data: { lessonId: lesson.id, title: `Quiz - ${lesson.title}`, passingScorePercent: 70 },
-    });
-    exCount++;
-
-    for (let qi = 0; qi < questions.length; qi++) {
-      const q = await prisma.question.create({
-        data: {
-          exerciseId: ex.id,
-          type: QuestionType.mcq,
-          prompt: questions[qi].prompt,
-          explanation: `La bonne réponse est l'option A car c'est la pratique recommandée.`,
-          order: qi + 1,
-          points: 1,
-        },
-      });
-      qCount++;
-
-      for (let oi = 0; oi < options.length; oi++) {
-        await prisma.answerOption.create({
+      for (let li = 0; li < 4; li++) {
+        const lesson = await prisma.lesson.create({
           data: {
-            questionId: q.id,
-            label: options[oi],
-            isCorrect: oi === questions[qi].correctIdx,
-            order: oi,
+            courseId,
+            title: fallbackTitles[li],
+            contentMarkdown: `# ${fallbackTitles[li]}\n\n${fallbackMarkdown}`,
+            order: li + 1,
+            durationMin: 20 + li * 5,
+            isPublished: true,
           },
         });
-        optCount++;
+        lessonCount++;
+
+        const exercise = await prisma.exercise.create({
+          data: {
+            lessonId: lesson.id,
+            title: `Quiz - ${fallbackTitles[li]}`,
+            passingScorePercent: 70,
+          },
+        });
+        exCount++;
+
+        for (let qi = 0; qi < 3; qi++) {
+          const question = await prisma.question.create({
+            data: {
+              exerciseId: exercise.id,
+              type: QuestionType.mcq,
+              prompt: `Question ${qi + 1} : quelle est la bonne pratique ?`,
+              explanation: 'La bonne réponse est l\'option A.',
+              order: qi + 1,
+              points: 1,
+            },
+          });
+          qCount++;
+
+          for (let oi = 0; oi < 4; oi++) {
+            await prisma.answerOption.create({
+              data: {
+                questionId: question.id,
+                label: `Option ${String.fromCharCode(65 + oi)}${oi === 0 ? ' : réponse correcte' : ' : réponse incorrecte'}`,
+                isCorrect: oi === 0,
+                order: oi,
+              },
+            });
+            optCount++;
+          }
+        }
       }
+
+      await prisma.project.create({
+        data: {
+          courseId,
+          title: 'Projet pratique',
+          instructions: '# Projet\n\nCréez une application complète mettant en œuvre les concepts du cours.',
+          evaluationCriteria: JSON.stringify(['Qualité du code', 'Fonctionnalités', 'Tests', 'Documentation']),
+        },
+      });
+      projectCount++;
+      console.log(`  ⚠️  "${courseEntry.title}" — contenu générique (placeholder)`);
     }
   }
-  console.log(`✔ Exercises (${exCount}), Questions (${qCount}), Options (${optCount})`);
+  console.log(`✔ Lessons (${lessonCount}), Exercises (${exCount}), Questions (${qCount}), Options (${optCount}), Projects (${projectCount})`);
 
   // ── Community Posts ────────────────────────────────────────────────
   const posts = [

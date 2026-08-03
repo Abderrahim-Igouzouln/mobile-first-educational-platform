@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import { Bell, CheckCheck } from 'lucide-react-native';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { SkeletonLoader } from '../../../shared/components/ui/SkeletonLoader';
+import { SkeletonLoader } from '../../../shared/components/ui/feedback/SkeletonLoader';
 import { useTheme } from '../../../shared/hooks/useTheme';
 import { spacing } from '../../../shared/constants/spacing';
 import { useGetNotifications, useMarkAllRead, useMarkRead } from '../services/notificationService';
@@ -110,7 +110,7 @@ export function NotificationCenterScreen() {
           )}
         </View>
         {unreadCount > 0 && (
-          <Pressable onPress={() => markAllRead()} role="button">
+          <Pressable onPress={() => markAllRead()} role="button" accessibilityLabel="Tout marquer comme lu">
             <CheckCheck size={22} color={colors.brand.orange} />
           </Pressable>
         )}

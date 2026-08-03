@@ -49,9 +49,9 @@ const mapCourse = (c: courseEndpoints.Course): Course => ({
   description: c.description,
   thumbnail: c.thumbnail,
   technologyId: c.technologyId,
-  lessonsCount: c.lessonsCount,
+  lessonsCount: c.lessonsCount ?? c.lessonCount ?? 0,
   completedLessonsCount: c.completedLessonsCount ?? 0,
-  duration: c.duration ?? 0,
+  duration: c.duration ?? c.estimatedDurationMin ?? 0,
   level: (c.level as Course['level']) || 'debutant',
   isPremium: c.isPremium,
   isDownloaded: false,
@@ -63,16 +63,16 @@ const mapLesson = (l: courseEndpoints.Lesson, index?: number): Lesson => ({
   id: l.id,
   title: l.title,
   slug: l.title.toLowerCase().replace(/\s+/g, '-'),
-  type: 'lecture',
-  content: l.content,
+  type: l.videoUrl ? 'video' : 'lecture',
+  content: l.content ?? l.contentMarkdown,
   videoUrl: l.videoUrl,
-  duration: l.duration ?? 0,
+  duration: l.duration ?? l.durationMin ?? 0,
   order: l.order,
   courseId: l.courseId,
   status: l.isCompleted ? 'completed' : index === 0 ? 'current' : 'available',
   isCompleted: l.isCompleted,
   isBookmarked: l.isBookmarked,
-  exercisesCount: 0,
+  exercisesCount: l.exercisesCount ?? 0,
 });
 
 export const useDomains = () =>
@@ -105,6 +105,31 @@ export const useCourse = (courseId: string) =>
       };
     },
     enabled: !!courseId,
+  });
+
+export const useCoursesForTechnology = (technologySlug: string) =>
+  useQuery({
+    queryKey: [...queryKeys.courses.all, 'tech-courses', technologySlug],
+    queryFn: async () => {
+      const data = await courseEndpoints.getCourses(technologySlug);
+      return data.map(mapCourse);
+    },
+    enabled: !!technologySlug,
+  });
+
+export const useCourseDetailByTech = (technologySlug: string) =>
+  useQuery({
+    queryKey: [...queryKeys.courses.all, 'tech-detail', technologySlug],
+    queryFn: async () => {
+      const courses = await courseEndpoints.getCourses(technologySlug);
+      if (!courses.length) return null;
+      const data = await courseEndpoints.getCourse(courses[0].id);
+      return {
+        ...mapCourse(data),
+        lessons: (data as Course & { lessons: courseEndpoints.Lesson[] }).lessons?.map(mapLesson) ?? [],
+      };
+    },
+    enabled: !!technologySlug,
   });
 
 export const useCompleteLesson = () => {

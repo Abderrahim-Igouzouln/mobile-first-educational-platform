@@ -16,7 +16,11 @@ export const Header: React.FC<HeaderProps> = ({ firstName, notificationCount = 0
       <View>
         <Text style={styles.logo}>DevEduForge</Text>
       </View>
-      <Pressable style={styles.bellButton}>
+      <Pressable
+        style={styles.bellButton}
+        role="button"
+        accessibilityLabel={notificationCount > 0 ? `Notifications (${notificationCount} non lues)` : 'Notifications'}
+      >
         <Bell size={22} color={colors.neutral.text} />
         {notificationCount > 0 && (
           <View style={styles.badge}>

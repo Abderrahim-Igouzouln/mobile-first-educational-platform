@@ -16,7 +16,7 @@ import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
 import { radius } from '../../../shared/constants/radius';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { LoadingSpinner } from '../../../shared/components/ui/LoadingSpinner';
+import { LoadingSpinner } from '../../../shared/components/ui/feedback/LoadingSpinner';
 import { MarkdownRenderer } from '../components/MarkdownRenderer';
 import { BookmarkButton } from '../components/BookmarkButton';
 import { useNotes } from '../hooks/useNotes';
@@ -30,9 +30,9 @@ type ScreenRoute = RouteProp<CourseStackParamList, 'LectureScreen'>;
 export const LectureScreen: React.FC = () => {
   const navigation = useNavigation<NavProp>();
   const route = useRoute<ScreenRoute>();
-  const { lessonId, lectureId } = route.params;
+  const { courseId, lessonId, lectureId } = route.params;
 
-  const { data: courseData } = useCourse(lessonId);
+  const { data: courseData } = useCourse(courseId);
   const { toggle } = useBookmarkToggle();
   const { notes, loading: notesLoading, saveNote, deleteNote } = useNotes(lectureId);
   const [newNote, setNewNote] = useState('');
@@ -61,6 +61,8 @@ export const LectureScreen: React.FC = () => {
           <Pressable
             style={styles.backCircle}
             onPress={() => navigation.goBack()}
+            role="button"
+            accessibilityLabel="Retour"
           >
             <ArrowLeft size={20} color={colors.neutral.text} />
           </Pressable>

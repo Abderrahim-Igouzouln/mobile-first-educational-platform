@@ -1,9 +1,11 @@
-import { prisma } from '../../config/database';
+import { prisma } from '../../config/database/prisma';
 import { CourseRepository } from './course.repository';
-import { NotFoundError, ForbiddenError } from '../../utils/errors.util';
+import { NotFoundError, ForbiddenError } from '../../utils/response/errors.util';
 import { Role } from '../../constants/roles';
+import { CertificationService } from '../certification/certification.service';
 
 const repo = new CourseRepository();
+const certificationService = new CertificationService();
 
 export class CourseService {
   async getDomains() {
@@ -61,6 +63,11 @@ export class CourseService {
     const progress = await repo.findUserProgressForCourse(userId, courseId);
     const progressMap = new Map(progress.map((p) => [p.lessonId, p.status]));
 
+    const bookmarks = await prisma.bookmark.findMany({
+      where: { userId, lessonId: { in: course.lessons.map((l) => l.id) } },
+    });
+    const bookmarkSet = new Set(bookmarks.map((b) => b.lessonId));
+
     let previousCompleted = true;
     const lessons = course.lessons.map((l) => {
       const status = progressMap.get(l.id) || 'not_started';
@@ -69,7 +76,19 @@ export class CourseService {
       else if (isLocked) previousCompleted = false;
       else previousCompleted = false;
 
-      return { id: l.id, title: l.title, order: l.order, durationMin: l.durationMin, videoUrl: l.videoUrl, isPublished: l.isPublished, status, isLocked, contentMarkdown: isLocked ? undefined : l.contentMarkdown };
+      return {
+        id: l.id,
+        title: l.title,
+        order: l.order,
+        durationMin: l.durationMin,
+        videoUrl: l.videoUrl,
+        isPublished: l.isPublished,
+        status,
+        isLocked,
+        contentMarkdown: isLocked ? undefined : l.contentMarkdown,
+        exercisesCount: l._count.exercises,
+        isBookmarked: bookmarkSet.has(l.id),
+      };
     });
 
     return { id: course.id, title: course.title, description: course.description, level: course.level, estimatedDurationMin: course.estimatedDurationMin, isPublished: course.isPublished, authorName: `${course.author.firstName} ${course.author.lastName}`, lessons };
@@ -92,6 +111,8 @@ export class CourseService {
     await repo.updateStreak(userId);
 
     await prisma.userActivity.create({ data: { userId, type: 'lesson.completed', metadata: { lessonId, courseId: lesson.courseId } } }).catch(() => {});
+
+    await certificationService.checkAndUnlockCertificate(userId, lesson.courseId).catch(() => {});
 
     return { lessonId, status: 'completed' };
   }

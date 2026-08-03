@@ -18,7 +18,7 @@ import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
 import { FormInput } from '../../../shared/components/forms/FormInput';
-import { Button } from '../../../shared/components/ui/Button';
+import { Button } from '../../../shared/components/ui/input/Button';
 import { useAuth } from '../../../core/auth/useAuth';
 import { loginSchema, LoginFormData } from '../auth.validation';
 import type { AuthStackParamList } from '../../../core/navigation/navigation.types';

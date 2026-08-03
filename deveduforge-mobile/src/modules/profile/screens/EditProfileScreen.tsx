@@ -5,8 +5,8 @@ import { colors } from '../../../shared/constants/colors';
 import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { Input } from '../../../shared/components/ui/Input';
-import { Button } from '../../../shared/components/ui/Button';
+import { Input } from '../../../shared/components/ui/input/Input';
+import { Button } from '../../../shared/components/ui/input/Button';
 import { ProfileAvatar } from '../components/ProfileAvatar';
 import { useAuth } from '../../../core/auth/useAuth';
 

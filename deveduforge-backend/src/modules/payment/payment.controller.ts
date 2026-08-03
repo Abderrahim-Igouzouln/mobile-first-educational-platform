@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { PaymentService } from './payment.service';
-import { sendSuccess, sendCreated } from '../../utils/apiResponse.util';
+import { sendSuccess, sendCreated } from '../../utils/response/apiResponse.util';
 
 const paymentService = new PaymentService();
 
@@ -30,6 +30,13 @@ export async function getUserSubscription(req: Request, res: Response, next: Nex
 
 export async function createCheckoutSession(req: Request, res: Response, next: NextFunction): Promise<void> {
   try { const result = await paymentService.createCheckoutSession(req.user!.id, req.body.planCode, req.body.successUrl, req.body.cancelUrl); sendSuccess(res, result); } catch (err) { next(err); }
+}
+
+export async function createCertificateCheckoutSession(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const result = await paymentService.createCertificateCheckoutSession(req.user!.id, req.body.certificateId, req.body.successUrl, req.body.cancelUrl);
+    sendSuccess(res, result);
+  } catch (err) { next(err); }
 }
 
 export async function handleStripeWebhook(req: Request, res: Response, next: NextFunction): Promise<void> {

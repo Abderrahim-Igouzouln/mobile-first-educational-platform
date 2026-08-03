@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { CertificationService } from './certification.service';
-import { sendSuccess, sendCreated } from '../../utils/apiResponse.util';
+import { sendSuccess, sendCreated } from '../../utils/response/apiResponse.util';
 
 const certificationService = new CertificationService();
 
@@ -11,9 +11,30 @@ export async function getCertificates(req: Request, res: Response, next: NextFun
   } catch (err) { next(err); }
 }
 
+export async function getCompletionStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const result = await certificationService.getCourseCompletionStatus(req.user!.id, req.params.courseId);
+    sendSuccess(res, result);
+  } catch (err) { next(err); }
+}
+
+export async function requestCheckout(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const result = await certificationService.requestCheckout(req.user!.id, req.params.id);
+    sendSuccess(res, result);
+  } catch (err) { next(err); }
+}
+
+export async function downloadCertificate(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const result = await certificationService.generateAndDownloadPdf(req.user!.id, req.params.id);
+    sendSuccess(res, result);
+  } catch (err) { next(err); }
+}
+
 export async function issueCertificate(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const cert = await certificationService.issueCertificate(req.user!.id, req.body.technologyId, req.body.scorePercent);
+    const cert = await certificationService.issueCertificate(req.user!.id, req.body.courseId, req.body.scorePercent);
     sendCreated(res, cert);
   } catch (err) { next(err); }
 }

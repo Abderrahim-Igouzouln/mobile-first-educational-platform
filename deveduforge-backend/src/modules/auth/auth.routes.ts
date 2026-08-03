@@ -116,8 +116,8 @@
  */
 import { Router } from 'express';
 import * as authController from './auth.controller';
-import { validationMiddleware } from '../../middleware/validation.middleware';
-import { authRateLimiter, emailRateLimiter } from '../../middleware/rateLimiter.middleware';
+import { validationMiddleware } from '../../middleware/validation/validation.middleware';
+import { authRateLimiter, emailRateLimiter } from '../../middleware/security/rateLimiter.middleware';
 import { extractUser } from './auth.middleware';
 import { registerSchema, loginSchema, refreshSchema, verifyEmailSchema,
   resendVerificationSchema, forgotPasswordSchema, resetPasswordSchema,

@@ -1,11 +1,11 @@
 import 'dotenv/config';
 import './types/express';
 import { createServer } from './server';
-import { prisma } from './config/database';
-import { redis } from './config/redis';
-import { logger } from './config/logger';
-import { sentry } from './config/sentry';
-import { environment } from './config/environment';
+import { prisma } from './config/database/prisma';
+import { redis } from './config/database/redis';
+import { logger } from './config/app/logger';
+import { sentry } from './config/app/sentry';
+import { environment } from './config/app/environment';
 
 async function bootstrap(): Promise<void> {
   logger.info('Starting DevEduForge API', {
@@ -40,7 +40,7 @@ async function bootstrap(): Promise<void> {
       logger.info('HTTP server closed');
     });
     await prisma.$disconnect();
-    await redis.quit();
+    try { await redis.quit(); } catch { /* Redis not connected */ }
     process.exit(0);
   };
 

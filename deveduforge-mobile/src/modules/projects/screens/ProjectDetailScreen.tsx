@@ -17,6 +17,8 @@ import {
   RotateCcw,
   ExternalLink,
 } from 'lucide-react-native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { Project, ProjectStep } from '../projects.types';
 import { colors } from '../../../shared/constants/colors';
 import { typography } from '../../../shared/constants/typography';
@@ -24,12 +26,16 @@ import { spacing } from '../../../shared/constants/spacing';
 import { radius } from '../../../shared/constants/radius';
 import { shadows } from '../../../shared/constants/shadows';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { Button } from '../../../shared/components/ui/Button';
-import { Card } from '../../../shared/components/ui/Card';
+import { Button } from '../../../shared/components/ui/input/Button';
+import { Card } from '../../../shared/components/ui/display/Card';
 import { ProjectStatusBadge } from '../components/ProjectStatusBadge';
 import { ProjectStepItem } from '../components/ProjectStepItem';
 import { SubmissionCard } from '../components/SubmissionCard';
 import { useProjectDetail } from '../services/projectService';
+import type { CourseStackParamList } from '../../../core/navigation/navigation.types';
+
+type NavProp = NativeStackNavigationProp<CourseStackParamList, 'ProjectDetailScreen'>;
+type ScreenRoute = RouteProp<CourseStackParamList, 'ProjectDetailScreen'>;
 
 type TabKey = 'enonce' | 'etapes' | 'rendu';
 
@@ -40,10 +46,13 @@ const TABS: { key: TabKey; label: string }[] = [
 ];
 
 export const ProjectDetailScreen: React.FC = () => {
+  const navigation = useNavigation<NavProp>();
+  const route = useRoute<ScreenRoute>();
+  const { projectId } = route.params;
   const [activeTab, setActiveTab] = useState<TabKey>('etapes');
   const [submissionDescription, setSubmissionDescription] = useState('');
 
-  const { data: project, isLoading } = useProjectDetail('p1');
+  const { data: project, isLoading } = useProjectDetail(projectId);
 
   const [steps, setSteps] = useState<ProjectStep[]>([]);
 
@@ -100,7 +109,7 @@ export const ProjectDetailScreen: React.FC = () => {
   return (
     <ScreenWrapper>
       <View style={styles.topBar}>
-        <Pressable style={styles.backButton}>
+        <Pressable style={styles.backButton} onPress={() => navigation.goBack()} role="button" accessibilityLabel="Retour">
           <ArrowLeft size={20} color={colors.neutral.text} />
         </Pressable>
         <Text style={styles.topTitle} numberOfLines={1}>
@@ -218,7 +227,7 @@ export const ProjectDetailScreen: React.FC = () => {
                   variant="outline"
                   icon={RotateCcw}
                   fullWidth
-                  onPress={() => {}}
+                  onPress={() => navigation.navigate('ProjectSubmissionScreen', { projectId })}
                 >
                   Rouvrir et modifier
                 </Button>
@@ -247,7 +256,7 @@ export const ProjectDetailScreen: React.FC = () => {
               textAlignVertical="top"
             />
 
-            <Button icon={Send} fullWidth onPress={() => {}}>
+            <Button icon={Send} fullWidth onPress={() => navigation.navigate('ProjectSubmissionScreen', { projectId })}>
               Soumettre
             </Button>
           </View>

@@ -55,8 +55,8 @@
 import { Router } from 'express';
 import * as userController from './user.controller';
 import { extractUser } from '../auth/auth.middleware';
-import { roleMiddleware } from '../../middleware/role.middleware';
-import { validationMiddleware } from '../../middleware/validation.middleware';
+import { roleMiddleware } from '../../middleware/auth/role.middleware';
+import { validationMiddleware } from '../../middleware/validation/validation.middleware';
 import { updateProfileSchema, updatePreferencesSchema, updateStatusSchema } from './user.validation';
 import { Role } from '../../constants/roles';
 

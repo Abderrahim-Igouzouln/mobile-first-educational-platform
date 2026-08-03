@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ExerciseService } from './exercise.service';
-import { sendSuccess } from '../../utils/apiResponse.util';
+import { sendSuccess } from '../../utils/response/apiResponse.util';
 
 const exerciseService = new ExerciseService();
 

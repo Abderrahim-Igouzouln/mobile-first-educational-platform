@@ -7,7 +7,7 @@ import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
 import { radius } from '../../../shared/constants/radius';
 import { shadows } from '../../../shared/constants/shadows';
-import { Badge } from '../../../shared/components/ui/Badge';
+import { Badge } from '../../../shared/components/ui/display/Badge';
 import { CourseProgress } from './CourseProgress';
 import type { Technology } from '../courses.types';
 

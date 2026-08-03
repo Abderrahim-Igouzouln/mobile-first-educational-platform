@@ -9,17 +9,23 @@ import {
   Platform,
 } from 'react-native';
 import { ArrowLeft, RotateCcw, Award } from 'lucide-react-native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { ProjectReview, ProjectSubmission } from '../projects.types';
 import { colors } from '../../../shared/constants/colors';
 import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
 import { radius } from '../../../shared/constants/radius';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { Button } from '../../../shared/components/ui/Button';
-import { Card } from '../../../shared/components/ui/Card';
-import { Avatar } from '../../../shared/components/ui/Avatar';
+import { Button } from '../../../shared/components/ui/input/Button';
+import { Card } from '../../../shared/components/ui/display/Card';
+import { Avatar } from '../../../shared/components/ui/display/Avatar';
 import { ProjectStatusBadge } from '../components/ProjectStatusBadge';
-import { useProjectReview, useProjectSubmission } from '../services/projectService';
+import { useProjectReview, useProjectSubmissionQuery } from '../services/projectService';
+import type { CourseStackParamList } from '../../../core/navigation/navigation.types';
+
+type NavProp = NativeStackNavigationProp<CourseStackParamList, 'ProjectReviewScreen'>;
+type ScreenRoute = RouteProp<CourseStackParamList, 'ProjectReviewScreen'>;
 
 const getGradeColor = (grade: number): string => {
   if (grade >= 80) return colors.semantic.success;
@@ -28,8 +34,11 @@ const getGradeColor = (grade: number): string => {
 };
 
 export const ProjectReviewScreen: React.FC = () => {
-  const { data: review, isLoading: reviewLoading } = useProjectReview('sub2');
-  const { data: submission, isLoading: submissionLoading } = useProjectSubmission('sub2');
+  const navigation = useNavigation<NavProp>();
+  const route = useRoute<ScreenRoute>();
+  const { projectId, submissionId } = route.params;
+  const { data: review, isLoading: reviewLoading } = useProjectReview(submissionId);
+  const { data: submission, isLoading: submissionLoading } = useProjectSubmissionQuery(submissionId);
 
   const isLoading = reviewLoading || submissionLoading;
 
@@ -58,7 +67,7 @@ export const ProjectReviewScreen: React.FC = () => {
   return (
     <ScreenWrapper>
       <View style={styles.topBar}>
-        <Pressable style={styles.backButton}>
+        <Pressable style={styles.backButton} onPress={() => navigation.goBack()} role="button" accessibilityLabel="Retour">
           <ArrowLeft size={20} color={colors.neutral.text} />
         </Pressable>
         <Text style={styles.topTitle}>Review du projet</Text>
@@ -81,7 +90,7 @@ export const ProjectReviewScreen: React.FC = () => {
         </View>
 
         <Card style={styles.reviewerCard}>
-          <Avatar name={review.reviewerName} size={40} uri={review.reviewerAvatar} />
+          <Avatar name={review.reviewerName} size={40} />
           <View style={styles.reviewerInfo}>
             <Text style={styles.reviewerLabel}>Reviewé par</Text>
             <Text style={styles.reviewerName}>{review.reviewerName}</Text>
@@ -126,7 +135,7 @@ export const ProjectReviewScreen: React.FC = () => {
             variant="primary"
             icon={RotateCcw}
             fullWidth
-            onPress={() => {}}
+            onPress={() => navigation.navigate('ProjectSubmissionScreen', { projectId })}
           >
             Soumettre à nouveau
           </Button>

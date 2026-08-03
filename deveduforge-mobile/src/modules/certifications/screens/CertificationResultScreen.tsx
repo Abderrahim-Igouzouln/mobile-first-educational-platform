@@ -26,7 +26,7 @@ import { spacing } from '../../../shared/constants/spacing';
 import { radius } from '../../../shared/constants/radius';
 import { shadows } from '../../../shared/constants/shadows';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { Button } from '../../../shared/components/ui/Button';
+import { Button } from '../../../shared/components/ui/input/Button';
 import type { CertificationStackParamList } from '../../../core/navigation/navigation.types';
 
 type NavProp = NativeStackNavigationProp<CertificationStackParamList, 'CertificationResultScreen'>;

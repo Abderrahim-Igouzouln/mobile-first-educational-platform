@@ -13,8 +13,8 @@ import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
 import { radius } from '../../../shared/constants/radius';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { Button } from '../../../shared/components/ui/Button';
-import { LoadingSpinner } from '../../../shared/components/ui/LoadingSpinner';
+import { Button } from '../../../shared/components/ui/input/Button';
+import { LoadingSpinner } from '../../../shared/components/ui/feedback/LoadingSpinner';
 
 export default function BiometricSetupScreen() {
   const [biometricType, setBiometricType] = useState<string>('');

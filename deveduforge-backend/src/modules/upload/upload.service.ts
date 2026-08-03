@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs/promises';
-import { generateStorageKey } from '../../utils/fileUpload.util';
+import { generateStorageKey } from '../../utils/helpers/fileUpload.util';
 
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(process.cwd(), 'uploads');
 const BASE_URL = process.env.UPLOAD_BASE_URL || 'http://localhost:4000/uploads';

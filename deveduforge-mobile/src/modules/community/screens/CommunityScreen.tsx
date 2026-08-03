@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, View, Text, Pressable, StyleSheet } from 'react-native';
-import { Plus, Users, MessageSquare, Circle, TrendingUp } from 'lucide-react-native';
+import { Plus, Users, MessageSquare, Circle, TrendingUp, Trophy } from 'lucide-react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ChevronRight } from 'lucide-react-native';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
 import { DiscussionCard } from '../components/DiscussionCard';
 import { StudyGroupCard } from '../components/StudyGroupCard';
@@ -12,8 +15,12 @@ import { radius } from '../../../shared/constants/radius';
 import { shadows } from '../../../shared/constants/shadows';
 import { useTrendingTopics, useDiscussions, useStudyGroups, useToggleJoinGroup } from '../services/communityService';
 import type { StudyGroup } from '../community.types';
+import type { CommunityStackParamList } from '../../../core/navigation/navigation.types';
+
+type NavProp = NativeStackNavigationProp<CommunityStackParamList, 'CommunityScreen'>;
 
 export default function CommunityScreen() {
+  const navigation = useNavigation<NavProp>();
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
   const { data: topics = [] } = useTrendingTopics();
   const { data: discussions = [] } = useDiscussions();
@@ -66,6 +73,15 @@ export default function CommunityScreen() {
           </View>
         </View>
 
+        <Pressable style={styles.leaderboardCard} onPress={() => navigation.navigate('LeaderboardScreen')}>
+          <Trophy size={22} color={colors.semantic.warning} />
+          <View style={styles.leaderboardInfo}>
+            <Text style={styles.leaderboardTitle}>Classement</Text>
+            <Text style={styles.leaderboardSub}>Voir le top des apprenants</Text>
+          </View>
+          <ChevronRight size={18} color={colors.neutral.textMuted} />
+        </Pressable>
+
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <TrendingUp size={18} color={colors.neutral.text} />
@@ -89,7 +105,7 @@ export default function CommunityScreen() {
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
             {discussions.slice(0, 4).map((discussion) => (
               <View key={discussion.id} style={styles.horizontalCard}>
-                <DiscussionCard discussion={discussion} onPress={() => {}} compact />
+                <DiscussionCard discussion={discussion} onPress={() => navigation.navigate('DiscussionScreen', { discussionId: discussion.id })} compact />
               </View>
             ))}
           </ScrollView>
@@ -98,7 +114,7 @@ export default function CommunityScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Questions récentes</Text>
           {discussions.map((discussion) => (
-            <DiscussionCard key={discussion.id} discussion={discussion} onPress={() => {}} />
+            <DiscussionCard key={discussion.id} discussion={discussion} onPress={() => navigation.navigate('DiscussionScreen', { discussionId: discussion.id })} />
           ))}
         </View>
 
@@ -109,7 +125,7 @@ export default function CommunityScreen() {
               <StudyGroupCard
                 key={group.id}
                 group={group}
-                onPress={() => {}}
+                onPress={() => navigation.navigate('StudyGroupDetailScreen', { groupId: group.id })}
                 onJoinToggle={handleJoinToggle}
               />
             ))}
@@ -123,6 +139,7 @@ export default function CommunityScreen() {
         style={styles.fab}
         role="button"
         accessibilityLabel="Nouvelle publication"
+        onPress={() => navigation.navigate('NewPostScreen')}
       >
         <Plus size={24} color={colors.neutral.surface} />
       </Pressable>
@@ -150,6 +167,28 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     gap: spacing.md,
     marginBottom: spacing.xxl,
+  },
+  leaderboardCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.neutral.surface,
+    marginHorizontal: spacing.lg,
+    marginBottom: spacing.lg,
+    padding: spacing.lg,
+    borderRadius: radius.lg,
+    ...shadows.sm,
+  },
+  leaderboardInfo: {
+    flex: 1,
+    marginLeft: spacing.md,
+  },
+  leaderboardTitle: {
+    ...typography.h3,
+    color: colors.neutral.text,
+  },
+  leaderboardSub: {
+    ...typography.bodySmall,
+    color: colors.neutral.textLight,
   },
   statCard: {
     flex: 1,

@@ -1,14 +1,15 @@
 import Stripe from 'stripe';
-import { stripe } from '../../../config/stripe';
+import { stripe } from '../../../config/integrations/stripe';
 
 export class StripeProvider {
   async createCheckoutSession(params: {
     priceMad: number;
-    planCode: string;
-    planName: string;
+    productCode: string;
+    productName: string;
     successUrl: string;
     cancelUrl: string;
     clientReferenceId: string;
+    metadata?: Record<string, string>;
   }): Promise<Stripe.Checkout.Session> {
     const rate = Number(process.env.STRIPE_MAD_TO_EUR_RATE || '0.092');
     const unitAmount = Math.max(Math.round(params.priceMad * rate * 100), 50);
@@ -19,8 +20,8 @@ export class StripeProvider {
         price_data: {
           currency: 'eur',
           product_data: {
-            name: params.planName,
-            description: `Plan ${params.planCode}`,
+            name: params.productName,
+            description: params.productCode,
           },
           unit_amount: unitAmount,
         },
@@ -29,7 +30,7 @@ export class StripeProvider {
       success_url: params.successUrl,
       cancel_url: params.cancelUrl,
       client_reference_id: params.clientReferenceId,
-      metadata: { planCode: params.planCode },
+      metadata: { productCode: params.productCode, ...params.metadata },
     });
   }
 

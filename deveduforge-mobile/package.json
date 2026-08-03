@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.ts",
   "dependencies": {
+    "@expo/metro-runtime": "~56.0.16",
     "@hookform/resolvers": "^5.4.0",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@react-native-community/netinfo": "^12.0.1",
@@ -14,6 +15,7 @@
     "axios": "^1.18.0",
     "babel-preset-expo": "~56.0.0",
     "expo": "~56.0.15",
+    "expo-constants": "~56.0.20",
     "expo-device": "^56.0.4",
     "expo-file-system": "~56.0.8",
     "expo-font": "^56.0.7",
@@ -30,6 +32,7 @@
     "expo-video": "~56.1.4",
     "i18next": "^26.3.1",
     "lucide-react-native": "^1.21.0",
+    "pngjs": "^7.0.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-hook-form": "^7.80.0",
@@ -40,10 +43,13 @@
     "react-native-qrcode-svg": "^6.3.21",
     "react-native-reanimated": "4.3.1",
     "react-native-safe-area-context": "~5.7.0",
-    "react-native-screens": "^4.25.2",
+    "react-native-screens": "4.25.2",
+    "react-native-svg": "15.15.4",
     "react-native-toast-message": "^2.3.3",
     "react-native-web": "^0.21.2",
+    "react-native-worklets": "^0.8.1",
     "react-redux": "^9.3.0",
+    "stream-buffers": "^2.2.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -55,7 +61,8 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "postinstall": "node scripts/patch-lucide.mjs"
   },
   "private": true
 }

@@ -3,7 +3,7 @@ import { ScrollView, View, Text, Pressable, StyleSheet } from 'react-native';
 import { ArrowUp, ArrowDown, Bookmark, BookmarkCheck, ChevronLeft } from 'lucide-react-native';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { Avatar } from '../../../shared/components/ui/Avatar';
+import { Avatar } from '../../../shared/components/ui/display/Avatar';
 import { CommentItem } from '../components/CommentItem';
 import { PostComposer } from '../components/PostComposer';
 import { colors } from '../../../shared/constants/colors';

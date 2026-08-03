@@ -1,4 +1,4 @@
-import { prisma } from '../../config/database';
+import { prisma } from '../../config/database/prisma';
 
 export class CommunityRepository {
   async findPosts(page = 1, limit = 20) {

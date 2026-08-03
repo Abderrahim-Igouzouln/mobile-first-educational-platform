@@ -71,8 +71,8 @@
 import { Router } from 'express';
 import * as paymentController from './payment.controller';
 import { extractUser } from '../auth/auth.middleware';
-import { roleMiddleware } from '../../middleware/role.middleware';
-import { validationMiddleware } from '../../middleware/validation.middleware';
+import { roleMiddleware } from '../../middleware/auth/role.middleware';
+import { validationMiddleware } from '../../middleware/validation/validation.middleware';
 import { createSubscriptionSchema, createCheckoutSessionSchema, updatePlanSchema } from './payment.validation';
 import { Role } from '../../constants/roles';
 
@@ -85,6 +85,7 @@ router.patch('/plans/:id', extractUser, roleMiddleware(Role.ADMIN, Role.SUPERADM
 router.post('/subscriptions', extractUser, validationMiddleware(createSubscriptionSchema), paymentController.createSubscription);
 router.get('/subscriptions/me', extractUser, paymentController.getUserSubscription);
 router.post('/create-checkout-session', extractUser, validationMiddleware(createCheckoutSessionSchema), paymentController.createCheckoutSession);
+router.post('/create-certificate-checkout-session', extractUser, paymentController.createCertificateCheckoutSession);
 router.get('/payments', extractUser, paymentController.getPaymentHistory);
 router.get('/invoices', extractUser, paymentController.getInvoices);
 router.get('/invoices/:id/view', paymentController.viewInvoice);

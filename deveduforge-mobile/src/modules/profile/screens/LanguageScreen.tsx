@@ -4,7 +4,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation } from '@react-navigation/native';
 import { Check } from 'lucide-react-native';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { Card } from '../../../shared/components/ui/Card';
+import { Card } from '../../../shared/components/ui/display/Card';
 import { colors } from '../../../shared/constants/colors';
 import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
@@ -17,22 +17,23 @@ import type { ProfileStackParamList } from '../../../core/navigation/navigation.
 type NavigationProp = NativeStackNavigationProp<ProfileStackParamList>;
 
 interface LanguageOption {
-  code: 'fr' | 'ar';
+  code: 'fr' | 'ar' | 'en';
   label: string;
   nativeLabel: string;
 }
 
 const LANGUAGES: LanguageOption[] = [
   { code: 'fr', label: 'Français', nativeLabel: 'Français' },
+  { code: 'en', label: 'Anglais', nativeLabel: 'English' },
   { code: 'ar', label: 'Arabe', nativeLabel: 'العربية' },
 ];
 
 export default function LanguageScreen() {
   const navigation = useNavigation<NavigationProp>();
   const dispatch = useAppDispatch();
-  const [selected, setSelected] = useState<'fr' | 'ar'>('fr');
+  const [selected, setSelected] = useState<'fr' | 'ar' | 'en'>('fr');
 
-  const handleSelect = async (code: 'fr' | 'ar') => {
+  const handleSelect = async (code: 'fr' | 'ar' | 'en') => {
     setSelected(code);
     dispatch(setLocale(code));
     await setItem('app_language', code);

@@ -1,17 +1,17 @@
 import express from 'express';
 import path from 'path';
 import swaggerUi from 'swagger-ui-express';
-import { helmetMiddleware } from './middleware/helmet.middleware';
-import { corsMiddleware } from './middleware/cors.middleware';
-import { compressionMiddleware } from './middleware/compression.middleware';
-import { requestIdMiddleware } from './middleware/requestId.middleware';
-import { loggingMiddleware } from './middleware/logging.middleware';
-import { sanitizeMiddleware } from './middleware/sanitize.middleware';
-import { globalRateLimiter } from './middleware/rateLimiter.middleware';
-import { errorHandlerMiddleware } from './middleware/errorHandler.middleware';
-import { notFoundMiddleware } from './middleware/notFound.middleware';
+import { helmetMiddleware } from './middleware/security/helmet.middleware';
+import { corsMiddleware } from './middleware/security/cors.middleware';
+import { compressionMiddleware } from './middleware/performance/compression.middleware';
+import { requestIdMiddleware } from './middleware/request/requestId.middleware';
+import { loggingMiddleware } from './middleware/request/logging.middleware';
+import { sanitizeMiddleware } from './middleware/security/sanitize.middleware';
+import { globalRateLimiter } from './middleware/security/rateLimiter.middleware';
+import { errorHandlerMiddleware } from './middleware/error/errorHandler.middleware';
+import { notFoundMiddleware } from './middleware/error/notFound.middleware';
 import { routes } from './modules/routes';
-import { swaggerSpec } from './config/swagger';
+import { swaggerSpec } from './config/integrations/swagger';
 import { handleStripeWebhook } from './modules/payment/payment.controller';
 
 export function createApp(): express.Application {

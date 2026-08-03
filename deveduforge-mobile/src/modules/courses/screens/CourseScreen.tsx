@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { ArrowRight, PenTool, FolderKanban, Star } from 'lucide-react-native';
 import { colors } from '../../../shared/constants/colors';
 import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';
+import { radius } from '../../../shared/constants/radius';
+import { shadows } from '../../../shared/constants/shadows';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { LoadingSpinner } from '../../../shared/components/ui/LoadingSpinner';
+import { LoadingSpinner } from '../../../shared/components/ui/feedback/LoadingSpinner';
 import { CourseHeader } from '../components/CourseHeader';
 import { LessonItem } from '../components/LessonItem';
 import { CourseProgress } from '../components/CourseProgress';
-import { MarkdownRenderer } from '../components/MarkdownRenderer';
-import { useCourse } from '../services/courseService';
+import { useCourseDetailByTech } from '../services/courseService';
 import { useCourseProgress } from '../hooks/useCourseProgress';
+import { useProjects } from '../../projects/services/projectService';
 import type { Lesson, TabOption } from '../courses.types';
 import type { CourseStackParamList } from '../../../core/navigation/navigation.types';
 
@@ -23,6 +26,7 @@ const TABS: TabOption[] = [
   { key: 'lectures', label: 'Lecture' },
   { key: 'exercices', label: 'Exercices' },
   { key: 'projets', label: 'Projets' },
+  { key: 'avis', label: 'Avis' },
 ];
 
 export const CourseScreen: React.FC = () => {
@@ -30,9 +34,8 @@ export const CourseScreen: React.FC = () => {
   const route = useRoute<ScreenRoute>();
   const { technologySlug } = route.params;
 
-  const { data: courseData, isLoading, isError } = useCourse(technologySlug);
+  const { data: courseData, isLoading, isError } = useCourseDetailByTech(technologySlug);
   const [activeTab, setActiveTab] = useState('lectures');
-  const [activeLessonId, setActiveLessonId] = useState<string | null>(null);
 
   const course = courseData
     ? { ...courseData, lessons: courseData.lessons ?? [] }
@@ -40,13 +43,16 @@ export const CourseScreen: React.FC = () => {
   const lessons = course?.lessons ?? [];
   const progress = useCourseProgress(course, lessons);
 
-  const activeLesson = activeLessonId
-    ? lessons.find((l) => l.id === activeLessonId)
-    : undefined;
+  const { data: projects = [] } = useProjects(course?.id);
 
   const handleLessonPress = (lesson: Lesson) => {
     if (lesson.status === 'locked') return;
-    setActiveLessonId(activeLessonId === lesson.id ? null : lesson.id);
+    if (!course?.id) return;
+    navigation.navigate('LessonScreen', { courseId: course.id, lessonId: lesson.id });
+  };
+
+  const handleStartExercise = (lessonId: string) => {
+    navigation.getParent()?.navigate('ExercisesTab', { screen: 'ExercisesScreen', params: { lessonId } });
   };
 
   if (isLoading) {
@@ -75,54 +81,148 @@ export const CourseScreen: React.FC = () => {
         onBack={() => navigation.goBack()}
       />
 
-      <FlatList
-        data={lessons}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.list}
-        showsVerticalScrollIndicator={false}
-        ListHeaderComponent={
-          <View style={styles.progressSection}>
-            <Text style={styles.sectionTitle}>Progression</Text>
-            <CourseProgress
-              completed={course.completedLessonsCount}
-              total={course.lessonsCount}
-              size="md"
-              showLabel
-            />
-            {progress && (
-              <Text style={styles.remainingText}>
-                {progress.remainingLessons > 0
-                  ? `Il vous reste ${progress.remainingLessons} leçon${progress.remainingLessons > 1 ? 's' : ''}`
-                  : 'Félicitations ! Vous avez terminé toutes les leçons.'}
-              </Text>
-            )}
-          </View>
-        }
-        ListFooterComponent={
-          activeLesson ? (
-            <View style={styles.lessonContent}>
-              <Text style={styles.lessonContentTitle}>{activeLesson.title}</Text>
-              {activeLesson.content ? (
-                <MarkdownRenderer content={activeLesson.content} />
-              ) : (
-                <Text style={styles.noContent}>Aucun contenu disponible.</Text>
+      {activeTab === 'lectures' && (
+        <FlatList
+          data={lessons}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.list}
+          showsVerticalScrollIndicator={false}
+          ListHeaderComponent={
+            <View style={styles.progressSection}>
+              <Text style={styles.sectionTitle}>Progression</Text>
+              <CourseProgress
+                completed={course.completedLessonsCount}
+                total={course.lessonsCount}
+                size="md"
+                showLabel
+              />
+              {progress && (
+                <Text style={styles.remainingText}>
+                  {progress.remainingLessons > 0
+                    ? `Il vous reste ${progress.remainingLessons} leçon${progress.remainingLessons > 1 ? 's' : ''}`
+                    : 'Félicitations ! Vous avez terminé toutes les leçons.'}
+                </Text>
               )}
             </View>
-          ) : null
-        }
-        renderItem={({ item, index }) => (
-          <LessonItem
-            lesson={item}
-            index={index}
-            onPress={() => handleLessonPress(item)}
-          />
-        )}
-        ListEmptyComponent={
-          <View style={styles.centerContent}>
-            <Text style={styles.emptyText}>Aucune leçon disponible.</Text>
-          </View>
-        }
-      />
+          }
+          renderItem={({ item, index }) => (
+            <LessonItem
+              lesson={item}
+              index={index}
+              onPress={() => handleLessonPress(item)}
+            />
+          )}
+          ListEmptyComponent={
+            <View style={styles.centerContent}>
+              <Text style={styles.emptyText}>Aucune leçon disponible.</Text>
+            </View>
+          }
+        />
+      )}
+
+      {activeTab === 'exercices' && (
+        <FlatList
+          data={lessons.filter((l) => l.exercisesCount > 0)}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.list}
+          showsVerticalScrollIndicator={false}
+          ListHeaderComponent={
+            <View style={styles.progressSection}>
+              <Text style={styles.sectionTitle}>Exercices disponibles</Text>
+              <Text style={styles.remainingText}>
+                {lessons.filter((l) => l.exercisesCount > 0).length} leçons avec exercices
+              </Text>
+            </View>
+          }
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.exerciseCard}
+              onPress={() => handleStartExercise(item.id)}
+              activeOpacity={0.7}
+            >
+              <View style={styles.exerciseCardLeft}>
+                <View style={styles.exerciseIcon}>
+                  <PenTool size={20} color={colors.brand.orange} />
+                </View>
+                <View style={styles.exerciseCardInfo}>
+                  <Text style={styles.exerciseCardTitle}>{item.title}</Text>
+                  <Text style={styles.exerciseCardMeta}>
+                    {item.exercisesCount} exercice{item.exercisesCount > 1 ? 's' : ''}
+                    {item.isCompleted ? ' · Terminé' : ''}
+                  </Text>
+                </View>
+              </View>
+              <ArrowRight size={20} color={colors.neutral.textLight} />
+            </TouchableOpacity>
+          )}
+          ListEmptyComponent={
+            <View style={styles.centerContent}>
+              <PenTool size={48} color={colors.neutral.textMuted} />
+              <Text style={styles.emptyText}>Aucun exercice disponible.</Text>
+            </View>
+          }
+        />
+      )}
+
+      {activeTab === 'projets' && (
+        <FlatList
+          data={projects}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.list}
+          showsVerticalScrollIndicator={false}
+          ListHeaderComponent={
+            <View style={styles.progressSection}>
+              <Text style={styles.sectionTitle}>Projets du cours</Text>
+              <Text style={styles.remainingText}>
+                {projects.length} projet{projects.length > 1 ? 's' : ''} — Soumettez votre travail pour recevoir un feedback
+              </Text>
+            </View>
+          }
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.exerciseCard}
+              onPress={() =>
+                navigation.navigate('ProjectDetailScreen', { projectId: item.id })
+              }
+              activeOpacity={0.7}
+            >
+              <View style={styles.exerciseCardLeft}>
+                <View style={styles.exerciseIcon}>
+                  <FolderKanban size={20} color={colors.brand.orange} />
+                </View>
+                <View style={styles.exerciseCardInfo}>
+                  <Text style={styles.exerciseCardTitle}>{item.title}</Text>
+                  <Text style={styles.exerciseCardMeta}>
+                    Difficulté : {item.difficulty} · {item.duration}
+                  </Text>
+                </View>
+              </View>
+              <ArrowRight size={20} color={colors.neutral.textLight} />
+            </TouchableOpacity>
+          )}
+          ListEmptyComponent={
+            <View style={styles.centerContent}>
+              <FolderKanban size={48} color={colors.neutral.textMuted} />
+              <Text style={styles.emptyText}>Aucun projet pour ce cours.</Text>
+            </View>
+          }
+        />
+      )}
+
+      {activeTab === 'avis' && (
+        <View style={styles.centerContent}>
+          <Star size={48} color={colors.semantic.warning} />
+          <Text style={styles.sectionTitle}>Avis des apprenants</Text>
+          <Text style={styles.emptyText}>Découvrez ce que les autres apprenants pensent de ce cours.</Text>
+          <TouchableOpacity
+            style={styles.reviewButton}
+            onPress={() => course?.id && navigation.navigate('CourseReviewsScreen', { courseId: course.id })}
+          >
+            <Star size={18} color={colors.neutral.surface} />
+            <Text style={styles.reviewButtonText}>Voir les avis</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </ScreenWrapper>
   );
 };
@@ -146,24 +246,65 @@ const styles = StyleSheet.create({
     color: colors.neutral.textLight,
     marginTop: spacing.sm,
   },
-  lessonContent: {
-    padding: spacing.xl,
+  exerciseCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: spacing.lg,
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.md,
+    backgroundColor: colors.neutral.surface,
+    borderRadius: radius.md,
+    ...shadows.sm,
   },
-  lessonContentTitle: {
-    ...typography.h2,
-    color: colors.neutral.text,
-    marginBottom: spacing.md,
+  exerciseCardLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
   },
-  noContent: {
+  exerciseIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.neutral.surfaceAlt,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: spacing.md,
+  },
+  exerciseCardInfo: {
+    flex: 1,
+  },
+  exerciseCardTitle: {
     ...typography.body,
-    color: colors.neutral.textMuted,
-    fontStyle: 'italic',
+    fontWeight: '600',
+    color: colors.neutral.text,
+  },
+  exerciseCardMeta: {
+    ...typography.bodySmall,
+    color: colors.neutral.textLight,
+    marginTop: 2,
   },
   centerContent: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: spacing.xl,
+    gap: spacing.md,
+  },
+  reviewButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    backgroundColor: colors.brand.orange,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xxl,
+    borderRadius: radius.md,
+    marginTop: spacing.md,
+  },
+  reviewButtonText: {
+    ...typography.body,
+    color: colors.neutral.surface,
+    fontWeight: '700',
   },
   errorText: {
     ...typography.body,

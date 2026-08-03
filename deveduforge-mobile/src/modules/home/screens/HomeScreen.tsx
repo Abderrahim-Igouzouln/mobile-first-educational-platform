@@ -1,5 +1,7 @@
 import React, { useCallback } from 'react';
 import { ScrollView, RefreshControl, View, Text, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
 import { colors } from '../../../shared/constants/colors';
 import { typography } from '../../../shared/constants/typography';
@@ -11,21 +13,27 @@ import { ContinueLearningCard } from '../components/ContinueLearningCard';
 import { StatsWidget } from '../components/StatsWidget';
 import { RecentActivityList } from '../components/RecentActivityList';
 import { useAuth } from '../../../core/auth/useAuth';
-import { useDomains, useContinueLearning, useUserStats } from '../services/homeService';
+import { useDomains, useContinueLearning, useUserStats, useRecentActivity } from '../services/homeService';
+import type { HomeStackParamList } from '../../../core/navigation/navigation.types';
+
+type NavProp = NativeStackNavigationProp<HomeStackParamList, 'HomeScreen'>;
 
 export default function HomeScreen() {
+  const navigation = useNavigation<NavProp>();
   const { user } = useAuth();
   const { data: domains = [], refetch: refetchDomains, isRefetching: domainsRefetching } = useDomains();
   const { data: continueLearning = [], refetch: refetchContinue, isRefetching: continueRefetching } = useContinueLearning();
   const { data: stats = [], refetch: refetchStats, isRefetching: statsRefetching } = useUserStats();
+  const { data: activities = [], refetch: refetchActivity, isRefetching: activityRefetching } = useRecentActivity();
 
-  const refreshing = domainsRefetching || continueRefetching || statsRefetching;
+  const refreshing = domainsRefetching || continueRefetching || statsRefetching || activityRefetching;
 
   const onRefresh = useCallback(() => {
     refetchDomains();
     refetchContinue();
     refetchStats();
-  }, [refetchDomains, refetchContinue, refetchStats]);
+    refetchActivity();
+  }, [refetchDomains, refetchContinue, refetchStats, refetchActivity]);
 
   const firstName = user?.firstName || '';
   const currentLesson = continueLearning[0];
@@ -54,20 +62,30 @@ export default function HomeScreen() {
 
         <DomainCarousel
           domains={domains}
-          onDomainPress={(domain) => {}}
+          onDomainPress={(domain) => (navigation as any).navigate('CoursesTab', {
+            screen: 'TechnologiesScreen',
+            params: { domainId: domain.slug },
+          })}
         />
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Reprendre</Text>
           <ContinueLearningCard
             lesson={currentLesson || { id: '', technologyName: 'Aucun cours', lessonTitle: 'Commencez un nouveau cours', progress: 0, icon: 'BookOpen' }}
-            onPress={() => {}}
+            onPress={() => {
+              if (currentLesson?.id) {
+                (navigation as any).navigate('CoursesTab', {
+                  screen: 'CourseScreen',
+                  params: { technologySlug: currentLesson.id },
+                });
+              }
+            }}
           />
         </View>
 
         <StatsWidget stats={stats} />
 
-        <RecentActivityList activities={[]} />
+        <RecentActivityList activities={activities} />
       </ScrollView>
     </ScreenWrapper>
   );

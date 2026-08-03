@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { Heart, MessageCircle, ChevronDown, ChevronUp } from 'lucide-react-native';
-import { Avatar } from '../../../shared/components/ui/Avatar';
+import { Avatar } from '../../../shared/components/ui/display/Avatar';
 import { colors } from '../../../shared/constants/colors';
 import { typography } from '../../../shared/constants/typography';
 import { spacing } from '../../../shared/constants/spacing';

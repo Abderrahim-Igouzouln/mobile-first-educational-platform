@@ -1,12 +1,12 @@
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { AuthRepository } from './auth.repository';
-import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../../utils/jwt.util';
-import { generateRandomToken, hashToken } from '../../utils/crypto.util';
-import { sendEmail } from '../../utils/email.util';
-import { AppError } from '../../utils/errors.util';
+import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../../utils/security/jwt.util';
+import { generateRandomToken, hashToken } from '../../utils/security/crypto.util';
+import { sendEmail } from '../../utils/communication/email.util';
+import { AppError } from '../../utils/response/errors.util';
 import { ErrorCodes } from '../../constants/errorCodes';
-import { prisma } from '../../config/database';
+import { prisma } from '../../config/database/prisma';
 import { Role } from '../../constants/roles';
 
 export class AuthService {

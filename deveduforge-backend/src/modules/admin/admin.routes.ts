@@ -23,7 +23,7 @@
 import { Router } from 'express';
 import * as adminController from './admin.controller';
 import { extractUser } from '../auth/auth.middleware';
-import { roleMiddleware } from '../../middleware/role.middleware';
+import { roleMiddleware } from '../../middleware/auth/role.middleware';
 import { Role } from '../../constants/roles';
 
 const router = Router();

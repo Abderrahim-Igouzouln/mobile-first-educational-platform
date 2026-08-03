@@ -1,4 +1,4 @@
-import { prisma } from '../../config/database';
+import { prisma } from '../../config/database/prisma';
 
 export class CourseRepository {
   async findDomains() {
@@ -30,7 +30,18 @@ export class CourseRepository {
   }
 
   async findCourseById(id: string) {
-    return prisma.course.findUnique({ where: { id }, include: { lessons: { where: { isPublished: true }, orderBy: { order: 'asc' } }, author: { select: { firstName: true, lastName: true } }, technology: true } });
+    return prisma.course.findUnique({
+      where: { id },
+      include: {
+        lessons: {
+          where: { isPublished: true },
+          orderBy: { order: 'asc' },
+          include: { _count: { select: { exercises: true } } },
+        },
+        author: { select: { firstName: true, lastName: true } },
+        technology: true,
+      },
+    });
   }
 
   async findLessonById(id: string) {

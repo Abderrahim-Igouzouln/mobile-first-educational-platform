@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { UploadService } from './upload.service';
-import { sendCreated } from '../../utils/apiResponse.util';
+import { sendCreated } from '../../utils/response/apiResponse.util';
 
 const uploadService = new UploadService();
 

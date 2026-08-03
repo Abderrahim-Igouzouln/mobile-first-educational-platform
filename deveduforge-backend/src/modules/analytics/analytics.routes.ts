@@ -18,9 +18,9 @@
 import { Router } from 'express';
 import * as analyticsController from './analytics.controller';
 import { extractUser } from '../auth/auth.middleware';
-import { roleMiddleware } from '../../middleware/role.middleware';
+import { roleMiddleware } from '../../middleware/auth/role.middleware';
 import { Role } from '../../constants/roles';
-import { validationMiddleware } from '../../middleware/validation.middleware';
+import { validationMiddleware } from '../../middleware/validation/validation.middleware';
 import { z } from 'zod';
 
 const trackEventSchema = z.object({

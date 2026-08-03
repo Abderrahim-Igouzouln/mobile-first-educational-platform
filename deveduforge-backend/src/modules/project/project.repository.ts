@@ -1,4 +1,4 @@
-import { prisma } from '../../config/database';
+import { prisma } from '../../config/database/prisma';
 
 export class ProjectRepository {
   async findProjectsByCourse(courseId: string) {
@@ -20,7 +20,7 @@ export class ProjectRepository {
   async findSubmissionById(id: string) {
     return prisma.projectSubmission.findUnique({
       where: { id },
-      include: { project: { select: { title: true } }, reviews: { include: { reviewer: { select: { firstName: true, lastName: true } } } }, comments: { include: { author: { select: { firstName: true, lastName: true } } } } },
+      include: { project: { select: { id: true, title: true, courseId: true } }, reviews: { include: { reviewer: { select: { firstName: true, lastName: true } } } }, comments: { include: { author: { select: { firstName: true, lastName: true } } } } },
     });
   }
 

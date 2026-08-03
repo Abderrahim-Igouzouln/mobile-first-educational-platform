@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet, Platform } from 'react-native';
+import { View, Text, ScrollView, Pressable, StyleSheet, Platform } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ArrowLeft } from 'lucide-react-native';
@@ -9,8 +9,8 @@ import { spacing } from '../../../shared/constants/spacing';
 import { radius } from '../../../shared/constants/radius';
 import { shadows } from '../../../shared/constants/shadows';
 import { ScreenWrapper } from '../../../shared/components/layout/ScreenWrapper';
-import { Button } from '../../../shared/components/ui/Button';
-import { LoadingSpinner } from '../../../shared/components/ui/LoadingSpinner';
+import { Button } from '../../../shared/components/ui/input/Button';
+import { LoadingSpinner } from '../../../shared/components/ui/feedback/LoadingSpinner';
 import { MarkdownRenderer } from '../components/MarkdownRenderer';
 import { BookmarkButton } from '../components/BookmarkButton';
 import { useCourse } from '../services/courseService';
@@ -53,13 +53,9 @@ export const LessonScreen: React.FC = () => {
       >
         <View style={styles.topBar}>
           <View style={styles.topBarLeft}>
-            <View style={styles.backCircle}>
-              <ArrowLeft
-                size={20}
-                color={colors.neutral.text}
-                onPress={() => navigation.goBack()}
-              />
-            </View>
+            <Pressable style={styles.backCircle} onPress={() => navigation.goBack()} role="button" accessibilityLabel="Retour">
+              <ArrowLeft size={20} color={colors.neutral.text} />
+            </Pressable>
             <Text style={styles.courseLabel} numberOfLines={1}>
               {courseData?.title ?? 'Cours'}
             </Text>
@@ -98,8 +94,16 @@ export const LessonScreen: React.FC = () => {
       </ScrollView>
 
       <View style={styles.bottomBar}>
-        <Button variant="primary" fullWidth onPress={() => {}}>
-          Passer aux exercices
+        <Button
+          variant="primary"
+          fullWidth
+          onPress={() =>
+            navigation.getParent()?.navigate('ExercisesTab', { screen: 'ExercisesScreen', params: { lessonId } })
+          }
+        >
+          {lesson.exercisesCount > 0
+            ? `Passer aux exercices (${lesson.exercisesCount})`
+            : 'Passer aux exercices'}
         </Button>
       </View>
     </ScreenWrapper>

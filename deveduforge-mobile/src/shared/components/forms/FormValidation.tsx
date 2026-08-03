@@ -12,7 +12,7 @@ interface FormValidationProps {
   type?: ValidationType;
 }
 
-const ICON_MAP: Record<ValidationType, React.ComponentType<{ size: number; color: string }>> = {
+const ICON_MAP: Record<ValidationType, React.ComponentType<{ size?: number; color?: string }>> = {
   error: AlertCircle,
   success: CheckCircle2,
   info: Info,

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 type Theme = 'light' | 'dark';
-type Locale = 'fr' | 'ar';
+type Locale = 'fr' | 'ar' | 'en';
 
 interface BannerState {
   message: string;
